@@ -71,6 +71,7 @@ export function mapApiUserToUser(raw: ApiUserResult): User {
     gender: raw.gender,
     age: raw.dob.age,
     city: raw.location.city,
+    state: raw.location.state,
     country: raw.location.country,
   };
 }

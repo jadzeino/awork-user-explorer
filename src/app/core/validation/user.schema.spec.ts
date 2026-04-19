@@ -62,6 +62,7 @@ describe('mapApiUserToUser', () => {
     expect(user.gender).toBe('female');
     expect(user.age).toBe(34);
     expect(user.city).toBe('New York');
+    expect(user.state).toBe('NY');
     expect(user.country).toBe('United States');
     expect(user.username).toBe('alice.smith');
   });

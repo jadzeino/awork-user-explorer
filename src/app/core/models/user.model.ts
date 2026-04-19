@@ -10,6 +10,7 @@ export interface User {
   gender: string;
   age: number;
   city: string;
+  state: string;
   country: string;
 }
 
