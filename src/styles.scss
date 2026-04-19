@@ -1,2 +1,76 @@
-/* You can add global styles to this file, and also import other style files */
 @use 'ease/ease-styles';
+
+/* =========================================================
+   SEMANTIC TOKENS — light mode (default)
+   ========================================================= */
+:root {
+  --surface-bg: #f4f7fb;
+  --surface-elevated: #ffffff;
+  --border-color: #dbedff;
+  --input-bg: #ffffff;
+  --text-primary: #081934;
+  --text-muted: #5576aa;
+  --row-hover: #f2f9ff;
+  --group-header-bg: #ebf5ff;
+  --skeleton-base: #ebf5ff;
+  --skeleton-highlight: #f2f9ff;
+}
+
+/* =========================================================
+   DARK MODE — activated by data-theme="dark" on <html>
+   ========================================================= */
+[data-theme='dark'] {
+  --surface-bg: #0a1628;
+  --surface-elevated: #0f1e36;
+  --border-color: #1a2f52;
+  --input-bg: #0f1e36;
+  --text-primary: #e8f0fc;
+  --text-muted: #6b8ab8;
+  --row-hover: #142240;
+  --group-header-bg: #0d1a32;
+  --skeleton-base: #142240;
+  --skeleton-highlight: #1a2f52;
+
+  /* Override ease palette CSS variables for dark mode */
+  --color-white: #0f1e36;
+  --color-smoke: #0d1a32;
+  --color-ice: #0a1628;
+  --color-sky: #0d1a32;
+  --color-fog: #1a2f52;
+  --color-dust: #243d66;
+  --color-light-steel: #3a5a8a;
+  --color-steel: #6b8ab8;
+  --color-slate: #8aaad8;
+  --color-midnight: #b0c8e8;
+  --color-asphalt: #c8daf2;
+  --color-night: #e8f0fc;
+
+  --color-text-normal: var(--text-primary);
+  --color-text-light: var(--text-muted);
+}
+
+/* =========================================================
+   GLOBAL RESETS & BASE
+   ========================================================= */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Sofia Pro', sofia-pro, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-primary);
+  background: var(--surface-bg);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* CDK Virtual Scroll override to allow flex height */
+.cdk-virtual-scroll-content-wrapper {
+  width: 100%;
+}

@@ -1,10 +1,96 @@
+@use 'ease/ease-import.scss' as *;
+
 :host {
-  header {
-    height: 200px;
-    text-align: center;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--surface-bg);
+}
+
+.app-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $spacing-xxl;
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  @include shadow(s);
+
+  &__brand {
     display: flex;
-    justify-content: center;
     align-items: center;
   }
+
+  &__logo {
+    height: 32px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-m;
+  }
+
+  &__theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    padding: 0;
+
+    svg { width: 18px; height: 18px; }
+
+    &:hover {
+      background: var(--row-hover);
+      color: var(--text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $color-blue-700;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: $spacing-xxl $spacing-xxl;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @include media-breakpoint-down(m) {
+    padding: $spacing-m;
+  }
+}
+
+.app-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  @include shadow(m);
 }

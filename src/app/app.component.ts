@@ -1,22 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { UsersService } from './services/users.service'
-import { User } from './models/user.model'
-import { UserListComponent } from './components/user-list/user-list.component'
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ThemeService } from './core/services/theme.service';
+import { UsersPageComponent } from './features/users/containers/users-page/users-page.component';
 
 @Component({
   selector: 'app-root',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  imports: [UserListComponent]
+  imports: [UsersPageComponent],
 })
-export class AppComponent implements OnInit {
-  usersService = inject(UsersService)
-
-  users: User[] = []
-
-  ngOnInit(): void {
-    this.usersService.getUsers().subscribe(users => {
-      this.users = users
-    })
-  }
+export class AppComponent {
+  readonly themeService = inject(ThemeService);
 }
