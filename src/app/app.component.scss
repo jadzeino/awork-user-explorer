@@ -88,7 +88,9 @@
   background: var(--surface-elevated);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  overflow: hidden;
+  /* overflow:hidden was clipping the user detail panel below the virtual scroll viewport.
+     Use overflow:visible so the card grows naturally when the panel opens. */
+  overflow: visible;
   display: flex;
   flex-direction: column;
   flex: 1;
