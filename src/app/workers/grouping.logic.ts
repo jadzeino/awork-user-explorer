@@ -1,13 +1,14 @@
-import { User, GroupBy, UserGroup, GroupingResult } from '../core/models/user.model';
+import { User, GroupBy, SortBy, UserGroup, GroupingResult } from '../core/models/user.model';
 
 export interface GroupingRequest {
   users: User[];
   groupBy: GroupBy;
   searchQuery: string;
   filterGender: string;
-  filterNat: string;
+  filterNats: string[];
   filterAgeMin: number;
   filterAgeMax: number;
+  sortBy: SortBy | '';
 }
 
 function sanitizeQuery(q: string): string {
@@ -17,11 +18,11 @@ function sanitizeQuery(q: string): string {
 function filterUsers(users: User[], req: GroupingRequest): User[] {
   const query = sanitizeQuery(req.searchQuery);
   const gender = req.filterGender.toLowerCase();
-  const nat = req.filterNat.toUpperCase();
+  const nats = req.filterNats.map(n => n.toUpperCase());
 
   return users.filter(u => {
     if (gender && u.gender.toLowerCase() !== gender) return false;
-    if (nat && u.nat !== nat) return false;
+    if (nats.length && !nats.includes(u.nat)) return false;
     if (req.filterAgeMin > 0 && u.age < req.filterAgeMin) return false;
     if (req.filterAgeMax > 0 && u.age > req.filterAgeMax) return false;
     if (query) {
@@ -30,6 +31,24 @@ function filterUsers(users: User[], req: GroupingRequest): User[] {
     }
     return true;
   });
+}
+
+function sortUsers(users: User[], sortBy: SortBy | ''): User[] {
+  if (!sortBy) return users;
+  const copy = [...users];
+  switch (sortBy) {
+    case 'name':
+      return copy.sort((a, b) =>
+        a.firstname.localeCompare(b.firstname) || a.lastname.localeCompare(b.lastname));
+    case 'age-asc':
+      return copy.sort((a, b) => a.age - b.age);
+    case 'age-desc':
+      return copy.sort((a, b) => b.age - a.age);
+    case 'nat':
+      return copy.sort((a, b) => a.nat.localeCompare(b.nat));
+    default:
+      return copy;
+  }
 }
 
 function groupByLetter(users: User[]): UserGroup[] {
@@ -75,12 +94,13 @@ function groupByNationality(users: User[]): UserGroup[] {
 
 export function runGrouping(req: GroupingRequest): GroupingResult {
   const filtered = filterUsers(req.users, req);
+  const sorted = sortUsers(filtered, req.sortBy);
 
   let groups: UserGroup[];
   switch (req.groupBy) {
-    case 'letter': groups = groupByLetter(filtered); break;
-    case 'age': groups = groupByAge(filtered); break;
-    case 'nationality': groups = groupByNationality(filtered); break;
+    case 'letter': groups = groupByLetter(sorted); break;
+    case 'age': groups = groupByAge(sorted); break;
+    case 'nationality': groups = groupByNationality(sorted); break;
   }
 
   return { groups, totalCount: filtered.length };

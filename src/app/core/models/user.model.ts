@@ -14,6 +14,7 @@ export interface User {
 }
 
 export type GroupBy = 'letter' | 'age' | 'nationality';
+export type SortBy = 'name' | 'age-asc' | 'age-desc' | 'nat';
 
 export interface UserGroup {
   key: string;

@@ -10,7 +10,6 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: var(--surface-bg);
 
   &__error {
     display: flex;
@@ -23,6 +22,12 @@
     font-size: $font-size-normal;
 
     svg { width: 20px; height: 20px; flex-shrink: 0; }
+  }
+
+  &__search {
+    padding: $spacing-m $spacing-l;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--surface-elevated);
   }
 
   &__skeleton {

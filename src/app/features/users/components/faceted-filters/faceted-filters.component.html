@@ -1,0 +1,109 @@
+<div class="filters">
+
+  <!-- Row 1: Gender + Group by -->
+  <div class="filters__row">
+    <div class="filters__section">
+      <span class="filters__section-label">Gender</span>
+      <div class="filters__chips" role="group" aria-label="Filter by gender">
+        <button
+          class="filters__chip"
+          [class.filters__chip--active]="state().filterGender === ''"
+          (click)="setGender('')"
+          type="button"
+        >All</button>
+        <button
+          class="filters__chip"
+          [class.filters__chip--active]="state().filterGender === 'female'"
+          (click)="setGender('female')"
+          type="button"
+        >Female</button>
+        <button
+          class="filters__chip"
+          [class.filters__chip--active]="state().filterGender === 'male'"
+          (click)="setGender('male')"
+          type="button"
+        >Male</button>
+      </div>
+    </div>
+
+    <div class="filters__section filters__section--grow">
+      <span class="filters__section-label">Group by</span>
+      <div class="filters__segmented" role="group" aria-label="Group users by">
+        @for (opt of GROUP_OPTIONS; track opt.value) {
+          <button
+            class="filters__segment"
+            [class.filters__segment--active]="state().groupBy === opt.value"
+            (click)="setGroupBy(opt.value)"
+            type="button"
+          >{{ opt.label }}</button>
+        }
+      </div>
+    </div>
+
+    <!-- Reset -->
+    @if (filterService.hasActiveFilters()) {
+      <button class="filters__reset" (click)="filterService.reset()" type="button" aria-label="Clear all filters">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+        Reset
+      </button>
+    }
+  </div>
+
+  <!-- Row 2: Nationality multi-select -->
+  <div class="filters__row">
+    <div class="filters__section filters__section--nat">
+      <span class="filters__section-label">Nationality</span>
+      <div class="filters__nat-chips" role="group" aria-label="Filter by nationality">
+        @for (nat of NAT_CODES; track nat) {
+          <button
+            class="filters__chip filters__chip--nat"
+            [class.filters__chip--active]="state().filterNats.includes(nat)"
+            (click)="toggleNat(nat)"
+            type="button"
+            [attr.aria-pressed]="state().filterNats.includes(nat)"
+          >{{ nat }}</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Age range slider -->
+  <div class="filters__row">
+    <div class="filters__section filters__section--age">
+      <span class="filters__section-label">Age</span>
+      <div class="filters__age-wrap">
+        <span class="filters__age-label">{{ ageLabel() }}</span>
+        <div class="filters__range-wrap">
+          <div class="filters__range-track">
+            <div
+              class="filters__range-fill"
+              [style.left]="fillLeft()"
+              [style.right]="fillRight()"
+            ></div>
+          </div>
+          <input
+            class="filters__range-thumb"
+            type="range"
+            [min]="AGE_MIN"
+            [max]="AGE_MAX"
+            [value]="displayAgeMin()"
+            (input)="onAgeMinInput($event)"
+            aria-label="Minimum age"
+          />
+          <input
+            class="filters__range-thumb"
+            type="range"
+            [min]="AGE_MIN"
+            [max]="AGE_MAX"
+            [value]="displayAgeMax()"
+            (input)="onAgeMaxInput($event)"
+            aria-label="Maximum age"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

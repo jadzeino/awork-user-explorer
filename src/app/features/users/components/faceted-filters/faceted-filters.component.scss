@@ -1,0 +1,237 @@
+@use 'ease/ease-import.scss' as *;
+
+:host { display: block; }
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-s;
+  padding: $spacing-m $spacing-l;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--surface-elevated);
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-m;
+    flex-wrap: wrap;
+  }
+
+  &__section {
+    display: flex;
+    align-items: center;
+    gap: $spacing-s;
+    flex-shrink: 0;
+
+    &--grow { flex: 1; }
+    &--nat { align-items: flex-start; width: 100%; }
+    &--age { width: 100%; }
+  }
+
+  &__section-label {
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 70px;
+  }
+
+  /* ── Chips ─── */
+  &__chips {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__nat-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+  }
+
+  &__chip {
+    height: 28px;
+    padding: 0 $spacing-s;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--row-hover);
+      color: var(--text-primary);
+    }
+
+    &--active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #fff;
+
+      &:hover {
+        background: var(--accent-primary-hover);
+        border-color: var(--accent-primary-hover);
+        color: #fff;
+      }
+    }
+
+    &--nat {
+      padding: 0 8px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+  }
+
+  /* ── Segmented control ─── */
+  &__segmented {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--input-bg);
+  }
+
+  &__segment {
+    padding: 0 $spacing-m;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    border-right: 1px solid var(--border-color);
+
+    &:last-child { border-right: none; }
+
+    &:hover {
+      background: var(--row-hover);
+      color: var(--text-primary);
+    }
+
+    &--active {
+      background: var(--accent-primary);
+      color: #fff;
+
+      &:hover {
+        background: var(--accent-primary-hover);
+        color: #fff;
+      }
+    }
+  }
+
+  /* ── Reset button ─── */
+  &__reset {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    padding: 0 $spacing-s;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+    flex-shrink: 0;
+
+    svg { width: 12px; height: 12px; }
+
+    &:hover {
+      background: $color-red-o-50;
+      color: $color-red-900;
+      border-color: $color-red-700;
+    }
+  }
+
+  /* ── Age range slider ─── */
+  &__age-wrap {
+    display: flex;
+    align-items: center;
+    gap: $spacing-m;
+    flex: 1;
+  }
+
+  &__age-label {
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    color: var(--text-primary);
+    min-width: 60px;
+    white-space: nowrap;
+  }
+
+  &__range-wrap {
+    position: relative;
+    height: 32px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  &__range-track {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  &__range-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--accent-primary);
+    border-radius: 2px;
+  }
+
+  &__range-thumb {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--surface-elevated);
+      border: 2px solid var(--accent-primary);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      cursor: grab;
+      pointer-events: all;
+
+      &:active { cursor: grabbing; }
+    }
+
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--surface-elevated);
+      border: 2px solid var(--accent-primary);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      cursor: grab;
+      pointer-events: all;
+    }
+
+    &:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+    }
+  }
+}

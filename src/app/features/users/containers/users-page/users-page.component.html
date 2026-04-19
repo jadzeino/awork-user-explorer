@@ -1,5 +1,4 @@
 <div class="users-page">
-  <app-user-filters />
 
   @if (error()) {
     <div class="users-page__error" role="alert">
@@ -10,6 +9,20 @@
     </div>
   }
 
+  <!-- ── Insight layer ── -->
+  @if (!loading()) {
+    <app-analytics [users]="filteredUsers()" />
+  }
+
+  <!-- ── Command bar ── -->
+  <div class="users-page__search">
+    <app-command-bar />
+  </div>
+
+  <!-- ── Faceted filters ── -->
+  <app-faceted-filters />
+
+  <!-- ── User list or skeleton ── -->
   @if (loading()) {
     <div class="users-page__skeleton" aria-label="Loading users" aria-busy="true">
       @for (row of skeletonRows; track $index) {
@@ -28,4 +41,5 @@
       [totalCount]="totalCount()"
     />
   }
+
 </div>

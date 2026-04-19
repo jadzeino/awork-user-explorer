@@ -21,9 +21,10 @@ const BASE_REQ: Omit<GroupingRequest, 'users'> = {
   groupBy: 'letter',
   searchQuery: '',
   filterGender: '',
-  filterNat: '',
+  filterNats: [],
   filterAgeMin: 0,
   filterAgeMax: 0,
+  sortBy: '',
 };
 
 describe('runGrouping', () => {
@@ -104,7 +105,7 @@ describe('runGrouping', () => {
         makeUser({ id: '1', nat: 'US' }),
         makeUser({ id: '2', nat: 'DE' }),
       ];
-      const result = runGrouping({ ...BASE_REQ, filterNat: 'US', users });
+      const result = runGrouping({ ...BASE_REQ, filterNats: ['US'], users });
       expect(result.totalCount).toBe(1);
     });
 
@@ -146,7 +147,7 @@ describe('runGrouping', () => {
 
     it('returns empty groups when no users match', () => {
       const users = [makeUser({ id: '1', nat: 'US' })];
-      const result = runGrouping({ ...BASE_REQ, filterNat: 'DE', users });
+      const result = runGrouping({ ...BASE_REQ, filterNats: ['DE'], users });
       expect(result.totalCount).toBe(0);
       expect(result.groups.length).toBe(0);
     });
@@ -157,7 +158,7 @@ describe('runGrouping', () => {
         makeUser({ id: '2', nat: 'US', gender: 'male', age: 25 }),
         makeUser({ id: '3', nat: 'DE', gender: 'female', age: 25 }),
       ];
-      const result = runGrouping({ ...BASE_REQ, filterNat: 'US', filterGender: 'female', users });
+      const result = runGrouping({ ...BASE_REQ, filterNats: ['US'], filterGender: 'female', users });
       expect(result.totalCount).toBe(1);
     });
   });

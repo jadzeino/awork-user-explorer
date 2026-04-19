@@ -1,0 +1,68 @@
+@use 'ease/ease-import.scss' as *;
+
+:host { display: block; }
+
+.cmd-bar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-s;
+  background: var(--input-bg);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0 $spacing-m;
+  height: 44px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  }
+
+  &__icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: $font-size-normal;
+    color: var(--text-primary);
+    outline: none;
+    min-width: 0;
+
+    &::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Hide browser default clear button */
+    &::-webkit-search-cancel-button { display: none; }
+  }
+
+  &__clear {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 4px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s;
+
+    svg { width: 14px; height: 14px; }
+
+    &:hover {
+      background: var(--row-hover);
+      color: var(--text-primary);
+    }
+  }
+}
