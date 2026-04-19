@@ -1,0 +1,31 @@
+<div class="users-page">
+  <app-user-filters />
+
+  @if (error()) {
+    <div class="users-page__error" role="alert">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="users-page__skeleton" aria-label="Loading users" aria-busy="true">
+      @for (row of skeletonRows; track $index) {
+        <div class="users-page__skeleton-row">
+          <app-skeleton shape="circle" width="40px" height="40px" />
+          <app-skeleton width="160px" height="14px" />
+          <app-skeleton width="200px" height="14px" />
+          <app-skeleton width="120px" height="14px" />
+          <app-skeleton width="48px" height="20px" />
+        </div>
+      }
+    </div>
+  } @else {
+    <app-user-list
+      [groups]="groups()"
+      [totalCount]="totalCount()"
+    />
+  }
+</div>

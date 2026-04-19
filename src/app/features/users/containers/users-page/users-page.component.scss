@@ -1,0 +1,44 @@
+@use 'ease/ease-import.scss' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.users-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--surface-bg);
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: $spacing-m;
+    padding: $spacing-l $spacing-xxl;
+    background: $color-red-o-50;
+    color: $color-red-900;
+    border-bottom: 1px solid $color-red-700;
+    font-size: $font-size-normal;
+
+    svg { width: 20px; height: 20px; flex-shrink: 0; }
+  }
+
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-s 0;
+  }
+
+  &__skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-m;
+    padding: $spacing-m $spacing-l;
+    height: 56px;
+    border-bottom: 1px solid var(--border-color);
+  }
+}

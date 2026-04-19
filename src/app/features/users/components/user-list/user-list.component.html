@@ -1,0 +1,34 @@
+<div class="list-header" role="row" aria-hidden="true">
+  <div class="list-header__avatar"></div>
+  <div class="list-header__col list-header__col--name">Name</div>
+  <div class="list-header__col list-header__col--email">Email</div>
+  <div class="list-header__col list-header__col--phone">Phone</div>
+  <div class="list-header__col list-header__col--nat">Nat.</div>
+  <div class="list-header__col list-header__col--chevron"></div>
+</div>
+
+<cdk-virtual-scroll-viewport
+  itemSize="56"
+  class="list-viewport"
+  role="list"
+  aria-label="User list"
+>
+  <ng-container *cdkVirtualFor="let row of rows(); trackBy: trackRow">
+    @if (row.type === 'header') {
+      <div class="group-header" role="listitem" aria-roledescription="group">
+        <span class="group-header__label">{{ row.label }}</span>
+        <span class="group-header__count">{{ row.count }}</span>
+      </div>
+    } @else {
+      <app-user-item
+        role="listitem"
+        [user]="row.user"
+        [natCount]="row.natCount"
+      />
+    }
+  </ng-container>
+</cdk-virtual-scroll-viewport>
+
+<div class="list-footer" aria-live="polite" aria-atomic="true">
+  Showing {{ totalCount() | number }} users
+</div>

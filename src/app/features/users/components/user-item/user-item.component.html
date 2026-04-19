@@ -1,0 +1,89 @@
+<div
+  class="user-item"
+  [class.user-item--expanded]="expanded()"
+  (click)="toggle()"
+  (keydown.enter)="toggle()"
+  (keydown.space)="toggle(); $event.preventDefault()"
+  role="button"
+  tabindex="0"
+  [attr.aria-expanded]="expanded()"
+  [attr.aria-label]="'View details for ' + user().firstname + ' ' + user().lastname"
+>
+  <img
+    class="user-item__avatar"
+    [src]="user().image"
+    [alt]="user().firstname + ' ' + user().lastname"
+    loading="lazy"
+    width="40"
+    height="40"
+  />
+
+  <span class="user-item__name">
+    {{ user().firstname }} {{ user().lastname }}
+  </span>
+
+  <span class="user-item__email">{{ user().email }}</span>
+
+  <span class="user-item__phone">{{ user().phone }}</span>
+
+  <span class="user-item__nat">
+    <span class="user-item__nat-badge">{{ user().nat }}</span>
+    <span class="user-item__nat-count">{{ natCount() }}</span>
+  </span>
+
+  <span class="user-item__chevron" aria-hidden="true">
+    <svg viewBox="0 0 20 20" fill="currentColor">
+      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+    </svg>
+  </span>
+</div>
+
+<div
+  class="user-item__detail"
+  [@expandCollapse]="animState()"
+  role="region"
+  [attr.aria-label]="'Details for ' + user().firstname + ' ' + user().lastname"
+>
+  <div class="user-item__detail-inner">
+    <div class="user-item__detail-avatar">
+      <img
+        [src]="user().image"
+        [alt]="user().firstname + ' ' + user().lastname"
+        width="64"
+        height="64"
+      />
+    </div>
+
+    <div class="user-item__detail-info">
+      <h3 class="user-item__detail-name">
+        {{ user().firstname }} {{ user().lastname }}
+      </h3>
+      <p class="user-item__detail-username">@{{ user().username }}</p>
+
+      <dl class="user-item__detail-list">
+        <dt>Email</dt>
+        <dd>
+          <a [href]="'mailto:' + user().email" (click)="$event.stopPropagation()">{{ user().email }}</a>
+        </dd>
+
+        <dt>Phone</dt>
+        <dd>{{ user().phone }}</dd>
+
+        <dt>Gender</dt>
+        <dd class="user-item__capitalize">{{ user().gender }}</dd>
+
+        <dt>Age</dt>
+        <dd>{{ user().age }}</dd>
+
+        <dt>Nationality</dt>
+        <dd>{{ user().nat }}</dd>
+
+        <dt>Location</dt>
+        <dd>{{ user().city }}, {{ user().country }}</dd>
+
+        <dt>Users same nationality</dt>
+        <dd>{{ natCount() }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
