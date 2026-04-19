@@ -42,8 +42,9 @@
 }
 
 .list-viewport {
-  flex: 1;
-  height: 600px;
+  /* 60px app header + 115px filters bar + 40px column header + 44px footer + padding */
+  height: calc(100vh - 320px);
+  min-height: 300px;
 }
 
 .group-header {

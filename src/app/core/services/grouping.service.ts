@@ -18,20 +18,25 @@ export class GroupingService {
 
   constructor() {
     if (this.isBrowser && typeof Worker !== 'undefined') {
-      this.worker = new Worker(
-        new URL('../../workers/grouping.worker', import.meta.url),
-        { type: 'module' },
-      );
-      this.worker.onmessage = ({ data }: MessageEvent<GroupingResult>) => {
-        this.pendingResponse?.next(data);
-        this.pendingResponse?.complete();
-        this.pendingResponse = null;
-      };
-      this.worker.onerror = err => {
-        console.error('[GroupingService] Worker error', err);
-        this.pendingResponse?.error(err);
-        this.pendingResponse = null;
-      };
+      try {
+        this.worker = new Worker(
+          new URL('../../workers/grouping.worker', import.meta.url),
+          { type: 'module' },
+        );
+        this.worker.onmessage = ({ data }: MessageEvent<GroupingResult>) => {
+          this.pendingResponse?.next(data);
+          this.pendingResponse?.complete();
+          this.pendingResponse = null;
+        };
+        this.worker.onerror = err => {
+          console.error('[GroupingService] Worker error', err);
+          this.pendingResponse?.error(err);
+          this.pendingResponse = null;
+        };
+      } catch {
+        // Worker construction blocked (e.g. test environment file:// origin) — fall back to sync
+        this.worker = null;
+      }
     }
   }
 
