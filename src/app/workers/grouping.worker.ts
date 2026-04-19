@@ -1,98 +1,13 @@
 /// <reference lib="webworker" />
 
-import { User, GroupBy, UserGroup, GroupingResult } from '../core/models/user.model';
+import { runGrouping, GroupingRequest } from './grouping.logic';
 
-export interface GroupingRequest {
-  users: User[];
-  groupBy: GroupBy;
-  searchQuery: string;
-  filterGender: string;
-  filterNat: string;
-  filterAgeMin: number;
-  filterAgeMax: number;
-}
-
-function sanitizeQuery(q: string): string {
-  return q.replace(/[<>"'&]/g, '').trim().toLowerCase();
-}
-
-function filterUsers(users: User[], req: GroupingRequest): User[] {
-  const query = sanitizeQuery(req.searchQuery);
-  const gender = req.filterGender.toLowerCase();
-  const nat = req.filterNat.toUpperCase();
-
-  return users.filter(u => {
-    if (gender && u.gender.toLowerCase() !== gender) return false;
-    if (nat && u.nat !== nat) return false;
-    if (req.filterAgeMin > 0 && u.age < req.filterAgeMin) return false;
-    if (req.filterAgeMax > 0 && u.age > req.filterAgeMax) return false;
-    if (query) {
-      const full = `${u.firstname} ${u.lastname} ${u.email} ${u.username}`.toLowerCase();
-      if (!full.includes(query)) return false;
-    }
-    return true;
-  });
-}
-
-function groupByLetter(users: User[]): UserGroup[] {
-  const map = new Map<string, User[]>();
-  for (const u of users) {
-    const key = u.firstname[0]?.toUpperCase() ?? '#';
-    const arr = map.get(key) ?? [];
-    arr.push(u);
-    map.set(key, arr);
-  }
-  return [...map.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, grpUsers]) => ({ key, label: key, users: grpUsers }));
-}
-
-function groupByAge(users: User[]): UserGroup[] {
-  const ranges: Array<{ key: string; label: string; min: number; max: number }> = [
-    { key: '18-29', label: '18 – 29', min: 18, max: 29 },
-    { key: '30-39', label: '30 – 39', min: 30, max: 39 },
-    { key: '40-49', label: '40 – 49', min: 40, max: 49 },
-    { key: '50-59', label: '50 – 59', min: 50, max: 59 },
-    { key: '60+', label: '60 +', min: 60, max: Infinity },
-    { key: 'under-18', label: 'Under 18', min: 0, max: 17 },
-  ];
-
-  const grouped: UserGroup[] = [];
-  for (const r of ranges) {
-    const grpUsers = users.filter(u => u.age >= r.min && u.age <= r.max);
-    if (grpUsers.length) {
-      grouped.push({ key: r.key, label: r.label, users: grpUsers });
-    }
-  }
-  return grouped;
-}
-
-function groupByNationality(users: User[]): UserGroup[] {
-  const map = new Map<string, User[]>();
-  for (const u of users) {
-    const arr = map.get(u.nat) ?? [];
-    arr.push(u);
-    map.set(u.nat, arr);
-  }
-  return [...map.entries()]
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, grpUsers]) => ({ key, label: key, users: grpUsers }));
-}
+export type { GroupingRequest };
 
 addEventListener('message', ({ data }: MessageEvent<GroupingRequest>) => {
   const start = performance.now();
-  const filtered = filterUsers(data.users, data);
-
-  let groups: UserGroup[];
-  switch (data.groupBy) {
-    case 'letter': groups = groupByLetter(filtered); break;
-    case 'age': groups = groupByAge(filtered); break;
-    case 'nationality': groups = groupByNationality(filtered); break;
-  }
-
-  const result: GroupingResult = { groups, totalCount: filtered.length };
+  const result = runGrouping(data);
   const elapsed = Math.round(performance.now() - start);
-  console.debug(`[GroupingWorker] ${filtered.length} users grouped in ${elapsed}ms`);
-
+  console.debug(`[GroupingWorker] ${result.totalCount} users grouped in ${elapsed}ms`);
   postMessage(result);
 });

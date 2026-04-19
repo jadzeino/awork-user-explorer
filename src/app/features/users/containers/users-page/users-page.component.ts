@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, inject, signal, DestroyRef
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { switchMap, map, combineLatest, tap, EMPTY, catchError, of, distinctUntilChanged } from 'rxjs';
+import { switchMap, combineLatest, tap, EMPTY, catchError, distinctUntilChanged } from 'rxjs';
 import { UsersService } from '../../../../core/services/users.service';
 import { GroupingService } from '../../../../core/services/grouping.service';
 import { FilterService } from '../../../../core/services/filter.service';
@@ -10,7 +10,6 @@ import { UserListComponent } from '../../components/user-list/user-list.componen
 import { UserFiltersComponent } from '../../components/user-filters/user-filters.component';
 import { SkeletonComponent } from '../../../../shared/components/skeleton/skeleton.component';
 import { GroupingResult, UserGroup } from '../../../../core/models/user.model';
-import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-users-page',

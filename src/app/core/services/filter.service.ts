@@ -1,7 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { GroupBy } from '../models/user.model';
-import { GroupingRequest } from '../../workers/grouping.worker';
-import { User } from '../models/user.model';
+import { GroupBy, User } from '../models/user.model';
+import { GroupingRequest } from '../../workers/grouping.logic';
 
 export interface FilterState {
   searchQuery: string;
