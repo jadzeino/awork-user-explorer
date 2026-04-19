@@ -33,6 +33,10 @@
 
   &__logo {
     height: 32px;
+    /* Invert the dark navy logo to white in dark mode */
+    :host-context([data-theme='dark']) & {
+      filter: brightness(0) invert(1);
+    }
   }
 
   &__actions {
