@@ -2,8 +2,11 @@ import { Injectable, signal, computed } from '@angular/core';
 import { GroupBy, SortBy, User } from '../models/user.model';
 import { GroupingRequest } from '../../workers/grouping.logic';
 
+export type SearchField = 'name' | 'email' | 'username' | 'phone' | 'city' | 'country';
+
 export interface FilterState {
   searchQuery: string;
+  searchFields: SearchField[];
   filterGender: string;
   filterNats: string[];
   filterAgeMin: number;
@@ -18,6 +21,7 @@ export interface FilterState {
 
 const INITIAL: FilterState = {
   searchQuery: '',
+  searchFields: [],
   filterGender: '',
   filterNats: [],
   filterAgeMin: 0,
@@ -108,7 +112,7 @@ export class FilterService {
       s.searchQuery || s.filterGender || s.filterNats.length ||
       s.filterAgeMin || s.filterAgeMax ||
       s.filterCountry || s.filterState || s.filterCity ||
-      s.nlQuery
+      s.nlQuery || s.searchFields.length
     );
   });
 
@@ -126,6 +130,7 @@ export class FilterService {
       users,
       groupBy: s.groupBy,
       searchQuery: s.searchQuery,
+      searchFields: s.searchFields,
       filterGender: s.filterGender,
       filterNats: s.filterNats,
       filterAgeMin: s.filterAgeMin,

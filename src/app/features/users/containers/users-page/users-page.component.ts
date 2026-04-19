@@ -66,6 +66,7 @@ export class UsersPageComponent {
           users,
           groupBy: filterState.groupBy,
           searchQuery: filterState.searchQuery,
+          searchFields: filterState.searchFields,
           filterGender: filterState.filterGender,
           filterNats: filterState.filterNats,
           filterAgeMin: filterState.filterAgeMin,

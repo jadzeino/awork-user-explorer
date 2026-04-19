@@ -13,6 +13,7 @@ const makeUser = (overrides: Partial<User> = {}): User => ({
   gender: 'female',
   age: 30,
   city: 'New York',
+  state: 'NY',
   country: 'United States',
   ...overrides,
 });
@@ -20,10 +21,14 @@ const makeUser = (overrides: Partial<User> = {}): User => ({
 const BASE_REQ: Omit<GroupingRequest, 'users'> = {
   groupBy: 'letter',
   searchQuery: '',
+  searchFields: [],
   filterGender: '',
   filterNats: [],
   filterAgeMin: 0,
   filterAgeMax: 0,
+  filterCountry: '',
+  filterState: '',
+  filterCity: '',
   sortBy: '',
 };
 

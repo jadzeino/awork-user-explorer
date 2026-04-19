@@ -1,9 +1,11 @@
 import { User, GroupBy, SortBy, UserGroup, GroupingResult } from '../core/models/user.model';
+import { SearchField } from '../core/services/filter.service';
 
 export interface GroupingRequest {
   users: User[];
   groupBy: GroupBy;
   searchQuery: string;
+  searchFields: SearchField[];
   filterGender: string;
   filterNats: string[];
   filterAgeMin: number;
@@ -32,8 +34,20 @@ function filterUsers(users: User[], req: GroupingRequest): User[] {
     if (req.filterAgeMin > 0 && u.age < req.filterAgeMin) return false;
     if (req.filterAgeMax > 0 && u.age > req.filterAgeMax) return false;
     if (query) {
-      const full = `${u.firstname} ${u.lastname} ${u.email} ${u.username}`.toLowerCase();
-      if (!full.includes(query)) return false;
+      const fields: SearchField[] = req.searchFields.length > 0
+        ? req.searchFields
+        : ['name', 'email', 'username', 'phone', 'city', 'country'];
+      const haystack = fields.map(f => {
+        switch (f) {
+          case 'name':    return `${u.firstname} ${u.lastname}`;
+          case 'email':   return u.email;
+          case 'username':return u.username;
+          case 'phone':   return u.phone;
+          case 'city':    return u.city;
+          case 'country': return u.country;
+        }
+      }).join(' ').toLowerCase();
+      if (!haystack.includes(query)) return false;
     }
     return true;
   });

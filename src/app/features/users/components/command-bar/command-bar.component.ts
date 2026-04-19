@@ -1,5 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { FilterService, parseNaturalLanguage } from '../../../../core/services/filter.service';
+import { Component, ChangeDetectionStrategy, inject, signal, computed } from '@angular/core';
+import { FilterService, SearchField, parseNaturalLanguage } from '../../../../core/services/filter.service';
+
+interface FieldChip {
+  key: SearchField;
+  label: string;
+}
 
 @Component({
   selector: 'app-command-bar',
@@ -12,19 +17,52 @@ export class CommandBarComponent {
   private readonly filterService = inject(FilterService);
 
   readonly inputValue = signal('');
+  readonly showFieldChips = signal(false);
+
+  readonly FIELD_CHIPS: FieldChip[] = [
+    { key: 'name',    label: 'Name' },
+    { key: 'email',   label: 'Email' },
+    { key: 'username',label: 'Username' },
+    { key: 'phone',   label: 'Phone' },
+    { key: 'city',    label: 'City' },
+    { key: 'country', label: 'Country' },
+  ];
+
+  readonly activeFields = computed(() => this.filterService.state().searchFields);
+
+  readonly placeholder = computed(() => {
+    const fields = this.activeFields();
+    if (fields.length === 0) return 'Search all fields, or try "female users under 30"';
+    return `Searching in: ${fields.join(', ')}`;
+  });
 
   onInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.inputValue.set(value);
     if (!value.trim()) {
-      this.filterService.reset();
+      this.filterService.update({ searchQuery: '', nlQuery: '' });
       return;
     }
-    this.filterService.update(parseNaturalLanguage(value));
+    // Try NL parse; always set searchQuery for keyword search too
+    const parsed = parseNaturalLanguage(value);
+    this.filterService.update({ searchQuery: value, ...parsed });
+  }
+
+  toggleField(field: SearchField): void {
+    const current = this.filterService.state().searchFields;
+    const next = current.includes(field)
+      ? current.filter(f => f !== field)
+      : [...current, field];
+    this.filterService.update({ searchFields: next });
+  }
+
+  toggleFieldChipsPanel(): void {
+    this.showFieldChips.update(v => !v);
   }
 
   clear(): void {
     this.inputValue.set('');
-    this.filterService.reset();
+    this.filterService.update({ searchQuery: '', nlQuery: '', searchFields: [] });
+    this.showFieldChips.set(false);
   }
 }

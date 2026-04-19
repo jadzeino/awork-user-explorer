@@ -1,23 +1,62 @@
 <div class="cmd-bar" role="search">
-  <svg class="cmd-bar__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-  </svg>
-  <input
-    class="cmd-bar__input"
-    type="search"
-    autocomplete="off"
-    spellcheck="false"
-    placeholder='Try "female users under 30" or "German users grouped by age"'
-    [value]="inputValue()"
-    (input)="onInput($event)"
-    (keydown.escape)="clear()"
-    aria-label="Natural language search"
-  />
-  @if (inputValue()) {
-    <button class="cmd-bar__clear" (click)="clear()" type="button" aria-label="Clear search">
+  <!-- Main input row -->
+  <div class="cmd-bar__input-row">
+    <svg class="cmd-bar__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+    </svg>
+
+    <input
+      class="cmd-bar__input"
+      type="search"
+      autocomplete="off"
+      spellcheck="false"
+      [placeholder]="placeholder()"
+      [value]="inputValue()"
+      (input)="onInput($event)"
+      (keydown.escape)="clear()"
+      aria-label="Search users"
+    />
+
+    <!-- Field scope toggle -->
+    <button
+      class="cmd-bar__scope-btn"
+      [class.cmd-bar__scope-btn--active]="showFieldChips() || activeFields().length > 0"
+      (click)="toggleFieldChipsPanel()"
+      type="button"
+      [attr.aria-expanded]="showFieldChips()"
+      aria-label="Toggle search field scope"
+      title="Choose which fields to search"
+    >
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.553.894l-4 2A1 1 0 016 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
       </svg>
+      @if (activeFields().length > 0) {
+        <span class="cmd-bar__scope-badge">{{ activeFields().length }}</span>
+      }
     </button>
+
+    @if (inputValue() || activeFields().length > 0) {
+      <button class="cmd-bar__clear" (click)="clear()" type="button" aria-label="Clear search">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+    }
+  </div>
+
+  <!-- Field scope chips (slide down when panel open) -->
+  @if (showFieldChips()) {
+    <div class="cmd-bar__fields" role="group" aria-label="Search field scope">
+      <span class="cmd-bar__fields-label">Search in:</span>
+      @for (chip of FIELD_CHIPS; track chip.key) {
+        <button
+          class="cmd-bar__field-chip"
+          [class.cmd-bar__field-chip--active]="activeFields().includes(chip.key)"
+          (click)="toggleField(chip.key)"
+          type="button"
+          [attr.aria-pressed]="activeFields().includes(chip.key)"
+        >{{ chip.label }}</button>
+      }
+    </div>
   }
 </div>
