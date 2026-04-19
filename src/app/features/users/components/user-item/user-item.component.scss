@@ -2,7 +2,6 @@
 
 :host {
   display: block;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .user-item {
@@ -14,10 +13,16 @@
   cursor: pointer;
   transition: background 0.12s;
   outline: none;
+  border-bottom: 1px solid var(--border-color);
+  box-sizing: border-box;
 
-  &:hover,
-  &--expanded {
+  &:hover {
     background: var(--row-hover);
+  }
+
+  &--selected {
+    background: var(--row-hover);
+    border-left: 3px solid $color-blue-700;
   }
 
   &:focus-visible {
@@ -90,79 +95,11 @@
     height: 16px;
     color: var(--text-muted);
     flex-shrink: 0;
-    transition: transform 0.2s;
-    svg { width: 100%; height: 100%; }
+    transition: transform 0.2s ease;
+    svg { width: 100%; height: 100%; display: block; }
   }
 
-  &--expanded &__chevron {
+  &--selected &__chevron {
     transform: rotate(180deg);
   }
-
-  &__detail {
-    overflow: hidden;
-  }
-
-  &__detail-inner {
-    display: flex;
-    gap: $spacing-xxl;
-    padding: $spacing-l $spacing-l $spacing-l 68px;
-    background: var(--surface-elevated);
-    border-top: 1px solid var(--border-color);
-  }
-
-  &__detail-avatar img {
-    width: 64px;
-    height: 64px;
-    border-radius: 12px;
-    object-fit: cover;
-  }
-
-  &__detail-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__detail-name {
-    margin: 0 0 2px;
-    font-size: $font-size-h3;
-    font-weight: $font-weight-bold;
-    color: var(--text-primary);
-  }
-
-  &__detail-username {
-    margin: 0 0 $spacing-m;
-    font-size: $font-size-small;
-    color: var(--text-muted);
-  }
-
-  &__detail-list {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    gap: $spacing-xs $spacing-m;
-    margin: 0;
-
-    dt {
-      font-size: $font-size-small;
-      font-weight: $font-weight-semi;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      line-height: 20px;
-    }
-
-    dd {
-      margin: 0;
-      font-size: $font-size-normal;
-      color: var(--text-primary);
-      line-height: 20px;
-
-      a {
-        color: $color-blue-900;
-        text-decoration: none;
-        &:hover { text-decoration: underline; }
-      }
-    }
-  }
-
-  &__capitalize { text-transform: capitalize; }
 }

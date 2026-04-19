@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, inject, signal, DestroyRef
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { switchMap, combineLatest, tap, EMPTY, catchError, distinctUntilChanged } from 'rxjs';
+import { switchMap, combineLatest, EMPTY, catchError, distinctUntilChanged, tap } from 'rxjs';
 import { UsersService } from '../../../../core/services/users.service';
 import { GroupingService } from '../../../../core/services/grouping.service';
 import { FilterService } from '../../../../core/services/filter.service';
@@ -33,8 +33,8 @@ export class UsersPageComponent {
 
   constructor() {
     const filterState$ = toObservable(this.filterService.state);
+
     const users$ = this.usersService.getUsers().pipe(
-      tap(() => this.loading.set(false)),
       catchError(err => {
         this.loading.set(false);
         this.error.set((err as Error).message ?? 'Failed to load users');
@@ -62,6 +62,8 @@ export class UsersPageComponent {
           })
         )
       ),
+      // Loading turns off only when the first grouping result arrives
+      tap(() => this.loading.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((result: GroupingResult) => {
       this.groups.set(result.groups);

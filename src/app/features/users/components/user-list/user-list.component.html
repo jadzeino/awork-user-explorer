@@ -1,3 +1,4 @@
+<!-- Column headers -->
 <div class="list-header" role="row" aria-hidden="true">
   <div class="list-header__avatar"></div>
   <div class="list-header__col list-header__col--name">Name</div>
@@ -7,6 +8,7 @@
   <div class="list-header__col list-header__col--chevron"></div>
 </div>
 
+<!-- Virtual scroll viewport — all items are exactly 56px so itemSize is accurate -->
 <cdk-virtual-scroll-viewport
   itemSize="56"
   class="list-viewport"
@@ -15,6 +17,7 @@
 >
   <ng-container *cdkVirtualFor="let row of rows(); trackBy: trackRow">
     @if (row.type === 'header') {
+      <!-- Group header row — styled differently but same 56px height -->
       <div class="group-header" role="listitem" aria-roledescription="group">
         <span class="group-header__label">{{ row.label }}</span>
         <span class="group-header__count">{{ row.count }}</span>
@@ -24,11 +27,23 @@
         role="listitem"
         [user]="row.user"
         [natCount]="row.natCount"
+        [isSelected]="selectedUser()?.id === row.user.id"
+        (select)="onUserSelect($event)"
       />
     }
   </ng-container>
 </cdk-virtual-scroll-viewport>
 
+<!-- Detail panel — OUTSIDE the virtual scroll so it can expand freely -->
+@if (selectedUser()) {
+  <app-user-detail
+    [user]="selectedUser()!"
+    [natCount]="selectedNatCount()"
+    (close)="closeDetail()"
+  />
+}
+
+<!-- Footer -->
 <div class="list-footer" aria-live="polite" aria-atomic="true">
   Showing {{ totalCount() | number }} users
 </div>

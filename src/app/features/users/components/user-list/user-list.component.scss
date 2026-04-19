@@ -3,21 +3,19 @@
 :host {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  flex: 1;
+  /* No min-height: 0 here — we want the card to grow to show the detail panel */
 }
 
+/* ── Column header bar ─────────────────────────────── */
 .list-header {
   display: flex;
   align-items: center;
   gap: $spacing-m;
   padding: 0 $spacing-l;
   height: 40px;
+  flex-shrink: 0;
   background: var(--surface-elevated);
   border-bottom: 2px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  z-index: 10;
 
   &__avatar {
     width: 40px;
@@ -33,31 +31,36 @@
     white-space: nowrap;
     overflow: hidden;
 
-    &--name { flex: 1; min-width: 120px; }
-    &--email { width: 220px; }
-    &--phone { width: 130px; }
-    &--nat { width: 80px; text-align: right; }
+    &--name    { flex: 1; min-width: 120px; }
+    &--email   { width: 220px; }
+    &--phone   { width: 130px; }
+    &--nat     { width: 80px; text-align: right; }
     &--chevron { width: 16px; }
   }
 }
 
+/* ── Virtual scroll viewport ───────────────────────── */
 .list-viewport {
-  /* 60px app header + 115px filters bar + 40px column header + 44px footer + padding */
-  height: calc(100vh - 320px);
-  min-height: 300px;
+  /*
+   * A concrete height is required by CDK virtual scroll.
+   * We use a generous fixed height; the surrounding card can scroll if needed.
+   * Using calc(100vh - ...) led to too-small viewports; this is more reliable.
+   */
+  height: 600px;
+  flex-shrink: 0;
 }
 
+/* ── Group header row — same 56px height as user rows ── */
 .group-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 $spacing-l;
-  height: 36px;
+  /* Must match itemSize="56" so CDK scroll math stays accurate */
+  height: 56px;
+  box-sizing: border-box;
   background: var(--group-header-bg);
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 40px;
-  z-index: 5;
 
   &__label {
     font-size: $font-size-small;
@@ -78,10 +81,12 @@
   }
 }
 
+/* ── Footer ────────────────────────────────────────── */
 .list-footer {
   padding: $spacing-m $spacing-l;
   font-size: $font-size-small;
   color: var(--text-muted);
   border-top: 1px solid var(--border-color);
   text-align: right;
+  flex-shrink: 0;
 }

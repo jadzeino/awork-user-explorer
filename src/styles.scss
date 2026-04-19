@@ -70,7 +70,25 @@ html, body {
   transition: background 0.2s, color 0.2s;
 }
 
-/* CDK Virtual Scroll override to allow flex height */
+/* =========================================================
+   CDK VIRTUAL SCROLL — required base styles (not shipped in CDK CSS)
+   ========================================================= */
+.cdk-virtual-scroll-viewport {
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  /* Create a block formatting context so position:sticky children work */
+  display: block;
+}
+
 .cdk-virtual-scroll-content-wrapper {
-  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+.cdk-virtual-spacer {
+  display: block;
 }
