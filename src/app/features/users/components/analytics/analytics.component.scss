@@ -70,6 +70,23 @@
     display: flex;
     align-items: center;
     gap: $spacing-xs;
+
+    &--btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 5px;
+      width: 100%;
+      text-align: left;
+      transition: background 0.12s;
+
+      &:hover { background: var(--row-hover); }
+      &--active,
+      &.analytics__legend-row--active {
+        background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+      }
+    }
   }
 
   &__dot {
@@ -95,12 +112,19 @@
     color: var(--text-primary);
   }
 
+  /* ── SVG arc interactivity ─── */
+  &__arc {
+    transition: opacity 0.2s, stroke-width 0.2s;
+    &--dim    { opacity: 0.3; }
+    &--active { stroke-width: 12; }
+  }
+
   /* ── Age histogram ─── */
   &__histogram {
     display: flex;
     align-items: flex-end;
     gap: 4px;
-    height: 64px;
+    height: 72px;
     padding-bottom: 18px;
     position: relative;
   }
@@ -113,7 +137,20 @@
     flex: 1;
     height: 100%;
     gap: 3px;
-    cursor: default;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    border-radius: 3px;
+    transition: opacity 0.2s;
+
+    &:hover .analytics__bar { filter: brightness(1.15); }
+    &--dim    { opacity: 0.35; }
+    &--active .analytics__bar {
+      background: var(--accent-primary);
+      filter: brightness(1.2);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 35%, transparent);
+    }
   }
 
   &__bar {
@@ -121,7 +158,7 @@
     background: var(--accent-primary);
     border-radius: 3px 3px 0 0;
     min-height: 2px;
-    transition: height 0.3s ease;
+    transition: height 0.3s ease, filter 0.15s;
   }
 
   &__bar-label {
@@ -144,6 +181,19 @@
     display: flex;
     align-items: center;
     gap: $spacing-xs;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 4px 6px;
+    border-radius: 6px;
+    margin: 0 -6px;
+    width: calc(100% + 12px);
+    text-align: left;
+    transition: background 0.15s, opacity 0.2s;
+
+    &:hover { background: var(--row-hover); }
+    &--active { background: color-mix(in srgb, var(--accent-primary) 10%, transparent); }
+    &--dim    { opacity: 0.35; }
   }
 
   &__nat-code {

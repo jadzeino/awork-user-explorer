@@ -1,7 +1,7 @@
-<div class="analytics">
+<div class="analytics" role="region" aria-label="Analytics overview">
 
   <!-- Gender donut -->
-  <div class="analytics__card">
+  <div class="analytics__card" role="group" aria-label="Gender distribution">
     <p class="analytics__label">Gender</p>
     <div class="analytics__donut-wrap">
       <svg class="analytics__donut" viewBox="0 0 100 100" aria-hidden="true">
@@ -14,6 +14,13 @@
           stroke-dashoffset="0"
           stroke-linecap="round"
           transform="rotate(-90 50 50)"
+          class="analytics__arc"
+          [class.analytics__arc--dim]="activeGender() && activeGender() !== 'female'"
+          [class.analytics__arc--active]="activeGender() === 'female'"
+          (click)="clickGender('female')"
+          style="cursor:pointer"
+          role="button"
+          [attr.aria-label]="'Filter female: ' + genderData().femalePercent + '%'"
         />
         <circle
           cx="50" cy="50" r="35" fill="none"
@@ -23,6 +30,13 @@
           [attr.stroke-dashoffset]="genderData().maleOffset"
           stroke-linecap="round"
           transform="rotate(-90 50 50)"
+          class="analytics__arc"
+          [class.analytics__arc--dim]="activeGender() && activeGender() !== 'male'"
+          [class.analytics__arc--active]="activeGender() === 'male'"
+          (click)="clickGender('male')"
+          style="cursor:pointer"
+          role="button"
+          [attr.aria-label]="'Filter male: ' + genderData().malePercent + '%'"
         />
         <circle
           cx="50" cy="50" r="35" fill="none"
@@ -32,55 +46,97 @@
           [attr.stroke-dashoffset]="genderData().otherOffset"
           stroke-linecap="round"
           transform="rotate(-90 50 50)"
+          class="analytics__arc"
+          [class.analytics__arc--dim]="activeGender() && activeGender() !== 'other'"
+          [class.analytics__arc--active]="activeGender() === 'other'"
+          (click)="clickGender('other')"
+          style="cursor:pointer"
+          role="button"
+          [attr.aria-label]="'Filter other: ' + genderData().otherPercent + '%'"
         />
         <text x="50" y="46" text-anchor="middle" class="analytics__donut-count">{{ genderData().total }}</text>
         <text x="50" y="58" text-anchor="middle" class="analytics__donut-sub">users</text>
       </svg>
       <div class="analytics__legend">
-        <div class="analytics__legend-row">
+        <button
+          class="analytics__legend-row analytics__legend-row--btn"
+          [class.analytics__legend-row--active]="activeGender() === 'female'"
+          (click)="clickGender('female')"
+          type="button"
+          [attr.aria-pressed]="activeGender() === 'female'"
+        >
           <span class="analytics__dot analytics__dot--female"></span>
           <span class="analytics__legend-text">Female</span>
           <span class="analytics__legend-pct">{{ genderData().femalePercent }}%</span>
-        </div>
-        <div class="analytics__legend-row">
+        </button>
+        <button
+          class="analytics__legend-row analytics__legend-row--btn"
+          [class.analytics__legend-row--active]="activeGender() === 'male'"
+          (click)="clickGender('male')"
+          type="button"
+          [attr.aria-pressed]="activeGender() === 'male'"
+        >
           <span class="analytics__dot analytics__dot--male"></span>
           <span class="analytics__legend-text">Male</span>
           <span class="analytics__legend-pct">{{ genderData().malePercent }}%</span>
-        </div>
-        <div class="analytics__legend-row">
+        </button>
+        <button
+          class="analytics__legend-row analytics__legend-row--btn"
+          [class.analytics__legend-row--active]="activeGender() === 'other'"
+          (click)="clickGender('other')"
+          type="button"
+          [attr.aria-pressed]="activeGender() === 'other'"
+        >
           <span class="analytics__dot analytics__dot--other"></span>
           <span class="analytics__legend-text">Other</span>
           <span class="analytics__legend-pct">{{ genderData().otherPercent }}%</span>
-        </div>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Age histogram -->
-  <div class="analytics__card">
+  <div class="analytics__card" role="group" aria-label="Age distribution">
     <p class="analytics__label">Age Distribution</p>
-    <div class="analytics__histogram" aria-hidden="true">
+    <div class="analytics__histogram" aria-label="Click a bar to filter by age group">
       @for (bucket of ageData(); track bucket.label) {
-        <div class="analytics__bar-col" [title]="bucket.label + ': ' + bucket.count">
+        <button
+          class="analytics__bar-col"
+          [class.analytics__bar-col--active]="activeAgeMin() === bucket.min && activeAgeMax() === bucket.max"
+          [class.analytics__bar-col--dim]="(activeAgeMin() > 0 || activeAgeMax() > 0) && !(activeAgeMin() === bucket.min && activeAgeMax() === bucket.max)"
+          (click)="clickAge(bucket.min, bucket.max)"
+          type="button"
+          [attr.aria-pressed]="activeAgeMin() === bucket.min && activeAgeMax() === bucket.max"
+          [attr.aria-label]="bucket.label + ': ' + bucket.count + ' users'"
+          [title]="bucket.count + ' users'"
+        >
           <div class="analytics__bar" [style.height.%]="bucket.pct"></div>
           <span class="analytics__bar-label">{{ bucket.label }}</span>
-        </div>
+        </button>
       }
     </div>
   </div>
 
   <!-- Top nationalities -->
-  <div class="analytics__card">
+  <div class="analytics__card" role="group" aria-label="Top nationalities">
     <p class="analytics__label">Top Nationalities</p>
     <div class="analytics__nat-list">
       @for (item of natData(); track item.nat) {
-        <div class="analytics__nat-row">
+        <button
+          class="analytics__nat-row"
+          [class.analytics__nat-row--active]="activeNats().includes(item.nat)"
+          [class.analytics__nat-row--dim]="activeNats().length > 0 && !activeNats().includes(item.nat)"
+          (click)="clickNat(item.nat)"
+          type="button"
+          [attr.aria-pressed]="activeNats().includes(item.nat)"
+          [attr.aria-label]="item.nat + ': ' + item.count + ' users. Click to filter'"
+        >
           <span class="analytics__nat-code">{{ item.nat }}</span>
           <div class="analytics__nat-track">
             <div class="analytics__nat-fill" [style.width.%]="item.pct"></div>
           </div>
           <span class="analytics__nat-count">{{ item.count }}</span>
-        </div>
+        </button>
       }
     </div>
   </div>

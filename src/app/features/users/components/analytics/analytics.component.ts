@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { User } from '../../../../core/models/user.model';
+import { FilterService } from '../../../../core/services/filter.service';
 
 @Component({
   selector: 'app-analytics',
@@ -10,6 +11,7 @@ import { User } from '../../../../core/models/user.model';
 })
 export class AnalyticsComponent {
   readonly users = input.required<User[]>();
+  private readonly filterService = inject(FilterService);
 
   readonly RADIUS = 35;
   readonly CIRCUM = 2 * Math.PI * this.RADIUS;
@@ -38,22 +40,23 @@ export class AnalyticsComponent {
     };
   });
 
+  readonly AGE_BUCKETS = [
+    { label: '<18',   min: 0,  max: 17  },
+    { label: '18–29', min: 18, max: 29  },
+    { label: '30–39', min: 30, max: 39  },
+    { label: '40–49', min: 40, max: 49  },
+    { label: '50–59', min: 50, max: 59  },
+    { label: '60+',   min: 60, max: 999 },
+  ];
+
   readonly ageData = computed(() => {
     const users = this.users();
-    const buckets = [
-      { label: '<18', min: 0, max: 17 },
-      { label: '18–29', min: 18, max: 29 },
-      { label: '30–39', min: 30, max: 39 },
-      { label: '40–49', min: 40, max: 49 },
-      { label: '50–59', min: 50, max: 59 },
-      { label: '60+', min: 60, max: 999 },
-    ];
-    const counts = buckets.map(b => ({
-      label: b.label,
+    const counts = this.AGE_BUCKETS.map(b => ({
+      ...b,
       count: users.filter(u => u.age >= b.min && u.age <= b.max).length,
     }));
-    const max = Math.max(...counts.map(c => c.count), 1);
-    return counts.map(c => ({ ...c, pct: Math.round(c.count / max * 100) }));
+    const maxCount = Math.max(...counts.map(c => c.count), 1);
+    return counts.map(c => ({ ...c, pct: Math.round(c.count / maxCount * 100) }));
   });
 
   readonly natData = computed(() => {
@@ -64,4 +67,31 @@ export class AnalyticsComponent {
     const max = sorted[0]?.[1] ?? 1;
     return sorted.map(([nat, count]) => ({ nat, count, pct: Math.round(count / max * 100) }));
   });
+
+  // ── Active-state helpers for visual feedback ─────────
+  readonly activeGender = computed(() => this.filterService.state().filterGender);
+  readonly activeNats   = computed(() => this.filterService.state().filterNats);
+  readonly activeAgeMin = computed(() => this.filterService.state().filterAgeMin);
+  readonly activeAgeMax = computed(() => this.filterService.state().filterAgeMax);
+
+  // ── Click handlers ────────────────────────────────────
+  clickGender(gender: string): void {
+    const current = this.filterService.state().filterGender;
+    this.filterService.update({ filterGender: current === gender ? '' : gender });
+  }
+
+  clickNat(nat: string): void {
+    const current = this.filterService.state().filterNats;
+    const next = current.includes(nat) ? current.filter(n => n !== nat) : [...current, nat];
+    this.filterService.update({ filterNats: next });
+  }
+
+  clickAge(min: number, max: number): void {
+    const s = this.filterService.state();
+    const isActive = s.filterAgeMin === min && s.filterAgeMax === max;
+    this.filterService.update(isActive
+      ? { filterAgeMin: 0, filterAgeMax: 0 }
+      : { filterAgeMin: min, filterAgeMax: max }
+    );
+  }
 }
