@@ -19,17 +19,21 @@ export class AnalyticsComponent {
     const total = users.length || 1;
     const female = users.filter(u => u.gender === 'female').length;
     const male = users.filter(u => u.gender === 'male').length;
+    const other = users.filter(u => u.gender !== 'female' && u.gender !== 'male').length;
     const femaleArc = this.CIRCUM * female / total;
     const maleArc = this.CIRCUM * male / total;
+    const otherArc = this.CIRCUM * other / total;
     return {
       total: users.length,
-      female,
-      male,
+      female, male, other,
       femalePercent: Math.round(female / total * 100),
       malePercent: Math.round(male / total * 100),
+      otherPercent: Math.round(other / total * 100),
       femaleArc,
       maleArc,
+      otherArc,
       maleOffset: -(femaleArc),
+      otherOffset: -(femaleArc + maleArc),
       circum: this.CIRCUM,
     };
   });

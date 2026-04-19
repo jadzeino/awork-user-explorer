@@ -24,6 +24,15 @@
           stroke-linecap="round"
           transform="rotate(-90 50 50)"
         />
+        <circle
+          cx="50" cy="50" r="35" fill="none"
+          stroke="var(--accent-other)"
+          stroke-width="10"
+          [attr.stroke-dasharray]="genderData().otherArc + ' ' + genderData().circum"
+          [attr.stroke-dashoffset]="genderData().otherOffset"
+          stroke-linecap="round"
+          transform="rotate(-90 50 50)"
+        />
         <text x="50" y="46" text-anchor="middle" class="analytics__donut-count">{{ genderData().total }}</text>
         <text x="50" y="58" text-anchor="middle" class="analytics__donut-sub">users</text>
       </svg>
@@ -37,6 +46,11 @@
           <span class="analytics__dot analytics__dot--male"></span>
           <span class="analytics__legend-text">Male</span>
           <span class="analytics__legend-pct">{{ genderData().malePercent }}%</span>
+        </div>
+        <div class="analytics__legend-row">
+          <span class="analytics__dot analytics__dot--other"></span>
+          <span class="analytics__legend-text">Other</span>
+          <span class="analytics__legend-pct">{{ genderData().otherPercent }}%</span>
         </div>
       </div>
     </div>

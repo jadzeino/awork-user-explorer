@@ -23,6 +23,12 @@
           (click)="setGender('male')"
           type="button"
         >Male</button>
+        <button
+          class="filters__chip"
+          [class.filters__chip--active]="state().filterGender === 'other'"
+          (click)="setGender('other')"
+          type="button"
+        >Other</button>
       </div>
     </div>
 
