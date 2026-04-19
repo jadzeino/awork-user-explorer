@@ -8,6 +8,9 @@ export interface GroupingRequest {
   filterNats: string[];
   filterAgeMin: number;
   filterAgeMax: number;
+  filterCountry: string;
+  filterState: string;
+  filterCity: string;
   sortBy: SortBy | '';
 }
 
@@ -23,6 +26,9 @@ function filterUsers(users: User[], req: GroupingRequest): User[] {
   return users.filter(u => {
     if (gender && u.gender.toLowerCase() !== gender) return false;
     if (nats.length && !nats.includes(u.nat)) return false;
+    if (req.filterCountry && u.country !== req.filterCountry) return false;
+    if (req.filterState && u.state !== req.filterState) return false;
+    if (req.filterCity && u.city !== req.filterCity) return false;
     if (req.filterAgeMin > 0 && u.age < req.filterAgeMin) return false;
     if (req.filterAgeMax > 0 && u.age > req.filterAgeMax) return false;
     if (query) {

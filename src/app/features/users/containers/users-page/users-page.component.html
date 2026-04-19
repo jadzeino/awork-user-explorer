@@ -22,6 +22,9 @@
   <!-- ── Faceted filters ── -->
   <app-faceted-filters />
 
+  <!-- ── Location filter ── -->
+  <app-location-filter [users]="allUsers()" />
+
   <!-- ── User list or skeleton ── -->
   @if (loading()) {
     <div class="users-page__skeleton" aria-label="Loading users" aria-busy="true">

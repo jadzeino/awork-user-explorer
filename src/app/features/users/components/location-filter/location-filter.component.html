@@ -1,0 +1,88 @@
+<div class="loc-filter">
+  <div class="loc-filter__header">
+    <span class="loc-filter__title">
+      <svg class="loc-filter__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+      </svg>
+      Location
+    </span>
+    @if (hasLocation()) {
+      <button class="loc-filter__clear" (click)="clearLocation()" type="button" aria-label="Clear location filters">
+        Clear
+      </button>
+    }
+  </div>
+
+  <div class="loc-filter__row">
+    <!-- Country -->
+    <div class="loc-filter__field">
+      <label class="loc-filter__label" for="loc-country">Country</label>
+      <div class="loc-filter__select-wrap">
+        <select
+          id="loc-country"
+          class="loc-filter__select"
+          [value]="state().filterCountry"
+          (change)="onCountryChange($event)"
+          aria-label="Filter by country"
+        >
+          <option value="">All countries</option>
+          @for (country of countries(); track country) {
+            <option [value]="country">{{ country }}</option>
+          }
+        </select>
+        <svg class="loc-filter__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- State (only when country is selected) -->
+    @if (state().filterCountry && states().length) {
+      <div class="loc-filter__field">
+        <label class="loc-filter__label" for="loc-state">State / Region</label>
+        <div class="loc-filter__select-wrap">
+          <select
+            id="loc-state"
+            class="loc-filter__select"
+            [value]="state().filterState"
+            (change)="onStateChange($event)"
+            aria-label="Filter by state"
+          >
+            <option value="">All states</option>
+            @for (st of states(); track st) {
+              <option [value]="st">{{ st }}</option>
+            }
+          </select>
+          <svg class="loc-filter__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+      </div>
+    }
+
+    <!-- City typeahead -->
+    @if (state().filterCountry) {
+      <div class="loc-filter__field">
+        <label class="loc-filter__label" for="loc-city">City</label>
+        <div class="loc-filter__input-wrap">
+          <input
+            id="loc-city"
+            class="loc-filter__input"
+            type="search"
+            autocomplete="off"
+            list="loc-city-list"
+            placeholder="Type to search…"
+            [value]="state().filterCity"
+            (change)="onCityChange($event)"
+            aria-label="Filter by city"
+          />
+          <datalist id="loc-city-list">
+            @for (city of cities(); track city) {
+              <option [value]="city"></option>
+            }
+          </datalist>
+        </div>
+      </div>
+    }
+  </div>
+</div>

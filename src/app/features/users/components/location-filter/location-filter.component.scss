@@ -1,0 +1,138 @@
+@use 'ease/ease-import.scss' as *;
+
+:host { display: block; }
+
+.loc-filter {
+  padding: $spacing-m $spacing-l;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--surface-elevated);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-s;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  &__clear {
+    font-size: $font-size-small;
+    color: var(--accent-primary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: $font-weight-semi;
+    transition: background 0.12s;
+
+    &:hover { background: var(--row-hover); }
+  }
+
+  &__row {
+    display: flex;
+    gap: $spacing-m;
+    flex-wrap: wrap;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 160px;
+    max-width: 260px;
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: $font-weight-semi;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Select ─── */
+  &__select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__select {
+    width: 100%;
+    height: 34px;
+    padding: 0 $spacing-l 0 $spacing-m;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: $font-size-normal;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 15%, transparent);
+    }
+
+    option { background: var(--surface-elevated); color: var(--text-primary); }
+  }
+
+  &__chevron {
+    position: absolute;
+    right: 10px;
+    width: 14px;
+    height: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  /* ── Input (city) ─── */
+  &__input-wrap {
+    position: relative;
+  }
+
+  &__input {
+    width: 100%;
+    height: 34px;
+    padding: 0 $spacing-m;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: $font-size-normal;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+
+    &::placeholder { color: var(--text-muted); font-style: italic; }
+
+    &:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-primary) 15%, transparent);
+    }
+
+    &::-webkit-search-cancel-button { display: none; }
+  }
+}

@@ -8,6 +8,9 @@ export interface FilterState {
   filterNats: string[];
   filterAgeMin: number;
   filterAgeMax: number;
+  filterCountry: string;
+  filterState: string;
+  filterCity: string;
   groupBy: GroupBy;
   sortBy: SortBy | '';
   nlQuery: string;
@@ -19,6 +22,9 @@ const INITIAL: FilterState = {
   filterNats: [],
   filterAgeMin: 0,
   filterAgeMax: 0,
+  filterCountry: '',
+  filterState: '',
+  filterCity: '',
   groupBy: 'letter',
   sortBy: '',
   nlQuery: '',
@@ -100,7 +106,9 @@ export class FilterService {
     const s = this.state();
     return !!(
       s.searchQuery || s.filterGender || s.filterNats.length ||
-      s.filterAgeMin || s.filterAgeMax || s.nlQuery
+      s.filterAgeMin || s.filterAgeMax ||
+      s.filterCountry || s.filterState || s.filterCity ||
+      s.nlQuery
     );
   });
 
@@ -122,6 +130,9 @@ export class FilterService {
       filterNats: s.filterNats,
       filterAgeMin: s.filterAgeMin,
       filterAgeMax: s.filterAgeMax,
+      filterCountry: s.filterCountry,
+      filterState: s.filterState,
+      filterCity: s.filterCity,
       sortBy: s.sortBy,
     };
   }
