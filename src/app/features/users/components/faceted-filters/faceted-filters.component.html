@@ -46,6 +46,26 @@
     }
   </div>
 
+  <!-- Row 1b: Sort -->
+  <div class="filters__row">
+    <div class="filters__section">
+      <svg class="filters__section-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h7a1 1 0 100-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3z"/>
+      </svg>
+      <span class="filters__section-label">Sort</span>
+      <div class="filters__segmented" role="group" aria-label="Sort users by">
+        @for (opt of SORT_OPTIONS; track opt.value) {
+          <button
+            class="filters__segment"
+            [class.filters__segment--active]="state().sortBy === opt.value"
+            (click)="setSortBy(opt.value)"
+            type="button"
+          >{{ opt.label }}</button>
+        }
+      </div>
+    </div>
+  </div>
+
   <!-- Row 2: Nationality -->
   <div class="filters__row">
     <div class="filters__section filters__section--nat">

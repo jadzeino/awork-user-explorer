@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { FilterService } from '../../../../core/services/filter.service';
-import { GroupBy } from '../../../../core/models/user.model';
+import { GroupBy, SortBy } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-faceted-filters',
@@ -23,6 +23,13 @@ export class FacetedFiltersComponent {
     { value: 'letter', label: 'A–Z' },
     { value: 'age', label: 'Age' },
     { value: 'nationality', label: 'Country' },
+  ];
+
+  readonly SORT_OPTIONS: { value: SortBy | ''; label: string }[] = [
+    { value: '',         label: 'Default' },
+    { value: 'name',     label: 'Name A→Z' },
+    { value: 'age-asc',  label: 'Age ↑' },
+    { value: 'age-desc', label: 'Age ↓' },
   ];
 
   readonly AGE_MIN = 18;
@@ -63,6 +70,10 @@ export class FacetedFiltersComponent {
 
   setGroupBy(groupBy: GroupBy): void {
     this.filterService.update({ groupBy });
+  }
+
+  setSortBy(sortBy: SortBy | ''): void {
+    this.filterService.update({ sortBy });
   }
 
   onAgeMinInput(event: Event): void {

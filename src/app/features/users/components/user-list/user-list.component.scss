@@ -30,8 +30,9 @@
     letter-spacing: 0.05em;
     white-space: nowrap;
     overflow: hidden;
+    flex-shrink: 0;
 
-    &--name    { flex: 1; min-width: 120px; }
+    &--name    { flex: 1; min-width: 120px; flex-shrink: 1; }
     &--email   { width: 220px; }
     &--phone   { width: 130px; }
     &--nat     { width: 80px; text-align: right; }
