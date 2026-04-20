@@ -48,6 +48,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: $font-size-normal;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__gender-icon {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    opacity: 0.7;
+    &--female { color: var(--accent-female); }
+    &--male   { color: var(--accent-male); }
   }
 
   &__email {

@@ -19,6 +19,16 @@
   />
 
   <span class="user-item__name">
+    <!-- Gender icon -->
+    @if (user().gender === 'female') {
+      <svg class="user-item__gender-icon user-item__gender-icon--female" viewBox="0 0 20 20" fill="currentColor" aria-label="Female">
+        <path d="M10 1a6 6 0 100 12A6 6 0 0010 1zm-1 13v3H7v2h6v-2h-2v-3a6 6 0 000-.001V14H9z"/>
+      </svg>
+    } @else if (user().gender === 'male') {
+      <svg class="user-item__gender-icon user-item__gender-icon--male" viewBox="0 0 20 20" fill="currentColor" aria-label="Male">
+        <path d="M13 2h5v5h-2V4.414l-3.293 3.293a5 5 0 11-1.414-1.414L14.586 3H13V2zM7 8a3 3 0 100 6 3 3 0 000-6z"/>
+      </svg>
+    }
     {{ user().firstname }} {{ user().lastname }}
   </span>
 
