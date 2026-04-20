@@ -1,11 +1,13 @@
 import {
-  Component, ChangeDetectionStrategy, input, computed, signal
+  Component, ChangeDetectionStrategy, input, computed, signal,
+  ViewChild, HostListener, inject
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { UserItemComponent } from '../user-item/user-item.component';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { UserGroup, User } from '../../../../core/models/user.model';
+import { FilterService } from '../../../../core/services/filter.service';
 
 /** Flat virtual-scroll row — all rows are the same height (56px) */
 export type VirtualRow =
@@ -22,6 +24,9 @@ export type VirtualRow =
 export class UserListComponent {
   readonly groups = input.required<UserGroup[]>();
   readonly totalCount = input.required<number>();
+
+  @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  private readonly filterService = inject(FilterService);
 
   /** Selected user for detail panel (lives outside virtual scroll) */
   readonly selectedUser = signal<User | null>(null);
@@ -71,6 +76,36 @@ export class UserListComponent {
     if (!u) return 0;
     return this.natCounts().get(u.nat) ?? 0;
   });
+
+  readonly isLetterGroupBy = computed(() =>
+    this.filterService.state().groupBy === 'letter'
+  );
+
+  readonly availableLetters = computed<string[]>(() =>
+    this.rows()
+      .filter((r): r is Extract<VirtualRow, { type: 'header' }> => r.type === 'header')
+      .map(r => r.label)
+  );
+
+  scrollToLetter(letter: string): void {
+    const idx = this.rows().findIndex(r => r.type === 'header' && r.label === letter);
+    if (idx !== -1) {
+      this.viewport.scrollToIndex(idx, 'smooth');
+    }
+  }
+
+  @HostListener('keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if (!this.isLetterGroupBy()) return;
+    const letter = event.key.toUpperCase();
+    if (/^[A-Z]$/.test(letter) && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      const available = this.availableLetters();
+      if (available.includes(letter)) {
+        event.preventDefault();
+        this.scrollToLetter(letter);
+      }
+    }
+  }
 
   trackRow(_i: number, row: VirtualRow): string {
     return row.type === 'header' ? `h-${row.label}` : `u-${row.user.id}`;

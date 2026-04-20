@@ -110,6 +110,52 @@
   }
 }
 
+/* ── Scroll area + alphabet sidebar ───────────────── */
+.list-scroll-area {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.alpha-index {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
+  z-index: 10;
+
+  &__btn {
+    pointer-events: all;
+    width: 18px;
+    height: 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    border-radius: 3px;
+    padding: 0;
+    line-height: 18px;
+    text-align: center;
+    transition: background 0.1s, color 0.1s;
+
+    &:hover {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 1px;
+    }
+  }
+}
+
 /* ── Footer ────────────────────────────────────────── */
 .list-footer {
   padding: $spacing-m $spacing-l;

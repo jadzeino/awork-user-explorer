@@ -17,46 +17,61 @@
   }
 </div>
 
-<!-- Virtual scroll viewport -->
-<cdk-virtual-scroll-viewport
-  itemSize="56"
-  class="list-viewport"
-  role="list"
-  aria-label="User list"
->
-  <ng-container *cdkVirtualFor="let row of rows(); trackBy: trackRow">
-    @if (row.type === 'header') {
-      <div
-        class="group-header"
-        [class.group-header--collapsed]="row.collapsed"
-        role="listitem"
-        aria-roledescription="group heading"
-        [attr.aria-label]="row.label + ' — ' + row.count + ' users'"
-        [attr.aria-expanded]="!row.collapsed"
-        tabindex="0"
-        (click)="toggleGroup(row.label)"
-        (keydown.enter)="toggleGroup(row.label)"
-        (keydown.space)="toggleGroup(row.label); $event.preventDefault()"
-      >
-        <span class="group-header__label">{{ row.label }}</span>
-        <div class="group-header__right">
-          <span class="group-header__count" aria-hidden="true">{{ row.count }}</span>
-          <svg class="group-header__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-          </svg>
+<!-- Virtual scroll viewport + alphabet sidebar -->
+<div class="list-scroll-area">
+  <cdk-virtual-scroll-viewport
+    itemSize="56"
+    class="list-viewport"
+    role="list"
+    aria-label="User list"
+  >
+    <ng-container *cdkVirtualFor="let row of rows(); trackBy: trackRow">
+      @if (row.type === 'header') {
+        <div
+          class="group-header"
+          [class.group-header--collapsed]="row.collapsed"
+          role="listitem"
+          aria-roledescription="group heading"
+          [attr.aria-label]="row.label + ' — ' + row.count + ' users'"
+          [attr.aria-expanded]="!row.collapsed"
+          tabindex="0"
+          (click)="toggleGroup(row.label)"
+          (keydown.enter)="toggleGroup(row.label)"
+          (keydown.space)="toggleGroup(row.label); $event.preventDefault()"
+        >
+          <span class="group-header__label">{{ row.label }}</span>
+          <div class="group-header__right">
+            <span class="group-header__count" aria-hidden="true">{{ row.count }}</span>
+            <svg class="group-header__chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </div>
         </div>
-      </div>
-    } @else {
-      <app-user-item
-        role="listitem"
-        [user]="row.user"
-        [natCount]="row.natCount"
-        [isSelected]="selectedUser()?.id === row.user.id"
-        (select)="onUserSelect($event)"
-      />
-    }
-  </ng-container>
-</cdk-virtual-scroll-viewport>
+      } @else {
+        <app-user-item
+          role="listitem"
+          [user]="row.user"
+          [natCount]="row.natCount"
+          [isSelected]="selectedUser()?.id === row.user.id"
+          (select)="onUserSelect($event)"
+        />
+      }
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+
+  @if (isLetterGroupBy()) {
+    <nav class="alpha-index" aria-label="Alphabet navigation">
+      @for (letter of availableLetters(); track letter) {
+        <button
+          class="alpha-index__btn"
+          type="button"
+          (click)="scrollToLetter(letter)"
+          [attr.aria-label]="'Jump to ' + letter"
+        >{{ letter }}</button>
+      }
+    </nav>
+  }
+</div>
 
 <!-- Detail panel outside virtual scroll -->
 @if (selectedUser()) {
