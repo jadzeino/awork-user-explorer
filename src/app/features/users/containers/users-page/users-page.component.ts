@@ -15,12 +15,13 @@ import { CompareModeComponent } from '../../components/compare-mode/compare-mode
 import { SkeletonComponent } from '../../../../shared/components/skeleton/skeleton.component';
 import { SavedFiltersComponent } from '../../components/saved-filters/saved-filters.component';
 import { UserDetailComponent } from '../../components/user-detail/user-detail.component';
+import { AgentModeComponent } from '../../components/agent-mode/agent-mode.component';
 import { GroupingResult, User, UserGroup } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-users-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UserListComponent, AnalyticsComponent, CommandBarComponent, FacetedFiltersComponent, LocationFilterComponent, CompareModeComponent, SkeletonComponent, SavedFiltersComponent, UserDetailComponent],
+  imports: [UserListComponent, AnalyticsComponent, CommandBarComponent, FacetedFiltersComponent, LocationFilterComponent, CompareModeComponent, SkeletonComponent, SavedFiltersComponent, UserDetailComponent, AgentModeComponent],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.scss',
 })

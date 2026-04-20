@@ -22,6 +22,7 @@ export interface FilterState {
   compareBy: CompareBy;
   compareA: string;
   compareB: string;
+  agentMode: boolean;
 }
 
 const INITIAL: FilterState = {
@@ -41,6 +42,7 @@ const INITIAL: FilterState = {
   compareBy: '',
   compareA: '',
   compareB: '',
+  agentMode: false,
 };
 
 const COUNTRY_NAT: Record<string, string> = {

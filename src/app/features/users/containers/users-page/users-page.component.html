@@ -1,14 +1,16 @@
 <div class="users-page">
 
-  <!-- ── Left panel — Filters ── -->
-  <aside class="users-page__left" [class.users-page__left--open]="leftOpen()">
-    <app-faceted-filters />
-    <app-location-filter [users]="allUsers()" />
-    <app-saved-filters />
-  </aside>
+  <!-- ── Left panel — Filters (hidden in Agent Mode) ── -->
+  @if (!filterService.state().agentMode) {
+    <aside class="users-page__left" [class.users-page__left--open]="leftOpen()">
+      <app-faceted-filters />
+      <app-location-filter [users]="allUsers()" />
+      <app-saved-filters />
+    </aside>
+  }
 
   <!-- ── Center panel — List ── -->
-  <main class="users-page__center">
+  <main class="users-page__center" [class.users-page__center--full]="filterService.state().agentMode">
 
     @if (error()) {
       <div class="users-page__error" role="alert">
@@ -45,35 +47,64 @@
       <app-compare-mode [users]="filteredUsers()" />
     }
 
-    <!-- Command bar + compare toggle -->
+    <!-- Mode toggle + command bar (Normal Mode only) -->
     <div class="users-page__search">
-      <!-- Mobile: left panel toggle -->
+      @if (!filterService.state().agentMode) {
+        <!-- Mobile: left panel toggle -->
+        <button
+          class="users-page__filter-toggle"
+          (click)="leftOpen.set(!leftOpen())"
+          type="button"
+          aria-label="Toggle filters"
+          title="Toggle filters"
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        <app-command-bar />
+        <button
+          class="users-page__compare-toggle"
+          [class.users-page__compare-toggle--active]="filterService.state().compareMode"
+          (click)="filterService.update({ compareMode: !filterService.state().compareMode })"
+          type="button"
+          [attr.aria-pressed]="filterService.state().compareMode"
+          title="Toggle compare mode"
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 12a1 1 0 01-1-1v-1.586l-2.293 2.293a1 1 0 01-1.414-1.414L9.586 13H8a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-1 1z"/>
+          </svg>
+          Compare
+        </button>
+      }
+
+      <!-- Mode toggle button (always visible) -->
       <button
-        class="users-page__filter-toggle"
-        (click)="leftOpen.set(!leftOpen())"
+        class="users-page__mode-toggle"
+        [class.users-page__mode-toggle--agent]="filterService.state().agentMode"
+        (click)="filterService.update({ agentMode: !filterService.state().agentMode })"
         type="button"
-        aria-label="Toggle filters"
-        title="Toggle filters"
+        [attr.aria-pressed]="filterService.state().agentMode"
+        title="Toggle Agent Mode"
       >
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-        </svg>
-      </button>
-      <app-command-bar />
-      <button
-        class="users-page__compare-toggle"
-        [class.users-page__compare-toggle--active]="filterService.state().compareMode"
-        (click)="filterService.update({ compareMode: !filterService.state().compareMode })"
-        type="button"
-        [attr.aria-pressed]="filterService.state().compareMode"
-        title="Toggle compare mode"
-      >
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-          <path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 12a1 1 0 01-1-1v-1.586l-2.293 2.293a1 1 0 01-1.414-1.414L9.586 13H8a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-1 1z"/>
-        </svg>
-        Compare
+        @if (filterService.state().agentMode) {
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+          Normal
+        } @else {
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+          Agent
+        }
       </button>
     </div>
+
+    <!-- Agent Mode input -->
+    @if (filterService.state().agentMode) {
+      <app-agent-mode />
+    }
 
     <!-- User list or skeleton -->
     @if (loading()) {
