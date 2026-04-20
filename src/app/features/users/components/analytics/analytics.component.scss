@@ -26,6 +26,7 @@
     flex-direction: column;
     gap: $spacing-xs;
     justify-content: center;
+    overflow: hidden;
   }
 
   &__label {

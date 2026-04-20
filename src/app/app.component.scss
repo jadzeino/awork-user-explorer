@@ -3,27 +3,29 @@
 :host {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: var(--surface-bg);
 }
 
 .app-header {
   height: 60px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 $spacing-xxl;
   background: var(--surface-elevated);
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: relative;
+  z-index: 200;
   @include shadow(s);
 
   &__brand {
@@ -33,7 +35,6 @@
 
   &__logo {
     height: 32px;
-    /* Invert the dark navy logo to white in dark mode */
     :host-context([data-theme='dark']) & {
       filter: brightness(0) invert(1);
     }
@@ -73,28 +74,9 @@
   }
 }
 
-.app-main {
+.app-body {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: $spacing-xxl $spacing-xxl;
-  max-width: 1400px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-
-  @include media-breakpoint-down(m) {
-    padding: $spacing-m;
-  }
-}
-
-.app-card {
-  background: var(--surface-elevated);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  @include shadow(m);
 }
