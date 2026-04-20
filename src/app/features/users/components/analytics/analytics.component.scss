@@ -48,8 +48,8 @@
   }
 
   &__donut {
-    width: 84px;
-    height: 84px;
+    width: 100px;
+    height: 100px;
     flex-shrink: 0;
   }
 
@@ -198,6 +198,19 @@
     &:hover { background: var(--row-hover); }
     &--active { background: color-mix(in srgb, var(--accent-primary) 10%, transparent); }
     &--dim    { opacity: 0.35; }
+
+    &--others {
+      cursor: default;
+      border-top: 1px dashed var(--border-color);
+      margin-top: 4px;
+      padding-top: 8px;
+      &:hover { background: transparent; }
+    }
+  }
+
+  &__nat-fill--others {
+    background: var(--text-muted);
+    opacity: 0.5;
   }
 
   &__nat-code {

@@ -5,9 +5,9 @@
     <p class="analytics__label">Gender</p>
     <div class="analytics__donut-wrap">
       <svg class="analytics__donut" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="35" fill="none" stroke="var(--border-color)" stroke-width="10"/>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border-color)" stroke-width="10"/>
         <circle
-          cx="50" cy="50" r="35" fill="none"
+          cx="50" cy="50" r="42" fill="none"
           stroke="var(--accent-female)"
           stroke-width="10"
           [attr.stroke-dasharray]="genderData().femaleArc + ' ' + genderData().circum"
@@ -23,7 +23,7 @@
           [attr.aria-label]="'Filter female: ' + genderData().femalePercent + '%'"
         />
         <circle
-          cx="50" cy="50" r="35" fill="none"
+          cx="50" cy="50" r="42" fill="none"
           stroke="var(--accent-male)"
           stroke-width="10"
           [attr.stroke-dasharray]="genderData().maleArc + ' ' + genderData().circum"
@@ -39,7 +39,7 @@
           [attr.aria-label]="'Filter male: ' + genderData().malePercent + '%'"
         />
         <circle
-          cx="50" cy="50" r="35" fill="none"
+          cx="50" cy="50" r="42" fill="none"
           stroke="var(--accent-other)"
           stroke-width="10"
           [attr.stroke-dasharray]="genderData().otherArc + ' ' + genderData().circum"
@@ -54,8 +54,8 @@
           role="button"
           [attr.aria-label]="'Filter other: ' + genderData().otherPercent + '%'"
         />
-        <text x="50" y="46" text-anchor="middle" class="analytics__donut-count">{{ genderData().total }}</text>
-        <text x="50" y="58" text-anchor="middle" class="analytics__donut-sub">users</text>
+        <text x="50" y="47" text-anchor="middle" class="analytics__donut-count">{{ genderData().total }}</text>
+        <text x="50" y="59" text-anchor="middle" class="analytics__donut-sub">users</text>
       </svg>
       <div class="analytics__legend">
         <button
@@ -122,21 +122,34 @@
     <p class="analytics__label">Top Nationalities</p>
     <div class="analytics__nat-list">
       @for (item of natData(); track item.nat) {
-        <button
-          class="analytics__nat-row"
-          [class.analytics__nat-row--active]="activeNats().includes(item.nat)"
-          [class.analytics__nat-row--dim]="activeNats().length > 0 && !activeNats().includes(item.nat)"
-          (click)="clickNat(item.nat)"
-          type="button"
-          [attr.aria-pressed]="activeNats().includes(item.nat)"
-          [attr.aria-label]="item.nat + ': ' + item.count + ' users. Click to filter'"
-        >
-          <span class="analytics__nat-code">{{ item.nat }}</span>
-          <div class="analytics__nat-track">
-            <div class="analytics__nat-fill" [style.width.%]="item.pct"></div>
+        @if (item.isOthers) {
+          <div
+            class="analytics__nat-row analytics__nat-row--others"
+            [class.analytics__nat-row--dim]="activeNats().length > 0"
+          >
+            <span class="analytics__nat-code">{{ item.nat }}</span>
+            <div class="analytics__nat-track">
+              <div class="analytics__nat-fill analytics__nat-fill--others" [style.width.%]="item.pct"></div>
+            </div>
+            <span class="analytics__nat-count">{{ item.count }}</span>
           </div>
-          <span class="analytics__nat-count">{{ item.count }}</span>
-        </button>
+        } @else {
+          <button
+            class="analytics__nat-row"
+            [class.analytics__nat-row--active]="activeNats().includes(item.nat)"
+            [class.analytics__nat-row--dim]="activeNats().length > 0 && !activeNats().includes(item.nat)"
+            (click)="clickNat(item.nat)"
+            type="button"
+            [attr.aria-pressed]="activeNats().includes(item.nat)"
+            [attr.aria-label]="item.nat + ': ' + item.count + ' users. Click to filter'"
+          >
+            <span class="analytics__nat-code">{{ item.nat }}</span>
+            <div class="analytics__nat-track">
+              <div class="analytics__nat-fill" [style.width.%]="item.pct"></div>
+            </div>
+            <span class="analytics__nat-count">{{ item.count }}</span>
+          </button>
+        }
       }
     </div>
   </div>

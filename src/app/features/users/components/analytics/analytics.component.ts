@@ -13,7 +13,7 @@ export class AnalyticsComponent {
   readonly users = input.required<User[]>();
   private readonly filterService = inject(FilterService);
 
-  readonly RADIUS = 35;
+  readonly RADIUS = 42;
   readonly CIRCUM = 2 * Math.PI * this.RADIUS;
 
   readonly genderData = computed(() => {
@@ -63,9 +63,13 @@ export class AnalyticsComponent {
     const users = this.users();
     const map = new Map<string, number>();
     for (const u of users) map.set(u.nat, (map.get(u.nat) ?? 0) + 1);
-    const sorted = [...map.entries()].sort(([, a], [, b]) => b - a).slice(0, 5);
-    const max = sorted[0]?.[1] ?? 1;
-    return sorted.map(([nat, count]) => ({ nat, count, pct: Math.round(count / max * 100) }));
+    const sorted = [...map.entries()].sort(([, a], [, b]) => b - a);
+    const top3 = sorted.slice(0, 3);
+    const othersCount = sorted.slice(3).reduce((sum, [, c]) => sum + c, 0);
+    const rows = top3.map(([nat, count]) => ({ nat, count, isOthers: false }));
+    if (othersCount > 0) rows.push({ nat: 'Others', count: othersCount, isOthers: true });
+    const max = rows[0]?.count ?? 1;
+    return rows.map(r => ({ ...r, pct: Math.round(r.count / max * 100) }));
   });
 
   // ── Active-state helpers for visual feedback ─────────
