@@ -155,6 +155,18 @@ export class FilterService {
     );
   });
 
+  /** True when anything differs from the out-of-the-box defaults (filters, grouping, sort, compare). */
+  readonly hasAnyChange = computed(() => {
+    const s = this.state();
+    return !!(
+      s.searchQuery || s.filterGender || s.filterNats.length ||
+      s.filterAgeMin || s.filterAgeMax ||
+      s.filterCountry || s.filterState || s.filterCity ||
+      s.nlQuery || s.searchFields.length ||
+      s.groupBy !== 'letter' || s.sortBy !== '' || s.compareMode
+    );
+  });
+
   update(patch: Partial<FilterState>): void {
     this.state.update(s => ({ ...s, ...patch }));
   }

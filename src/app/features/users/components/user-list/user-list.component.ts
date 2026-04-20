@@ -72,6 +72,9 @@ export class UserListComponent {
   );
 
   readonly hasActiveFilters = this.filterService.hasActiveFilters;
+  readonly hasAnyChange = computed(() =>
+    this.filterService.hasAnyChange() || this.collapsedGroups().size > 0
+  );
 
   readonly availableLetters = computed<string[]>(() =>
     this.rows()
