@@ -67,7 +67,7 @@ export class AnalyticsComponent {
     const top3 = sorted.slice(0, 3);
     const othersCount = sorted.slice(3).reduce((sum, [, c]) => sum + c, 0);
     const rows = top3.map(([nat, count]) => ({ nat, count, isOthers: false }));
-    if (othersCount > 0) rows.push({ nat: 'Others', count: othersCount, isOthers: true });
+    if (othersCount > 0) rows.push({ nat: 'Rest', count: othersCount, isOthers: true });
     const max = rows[0]?.count ?? 1;
     return rows.map(r => ({ ...r, pct: Math.round(r.count / max * 100) }));
   });
