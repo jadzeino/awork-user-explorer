@@ -1,5 +1,5 @@
-<!-- Column headers -->
-<div class="list-header" role="row" aria-hidden="true">
+<!-- Column headers — presentational, hidden from AT -->
+<div class="list-header" role="rowgroup" aria-hidden="true">
   <div class="list-header__avatar"></div>
   <div class="list-header__col list-header__col--name">Name</div>
   <div class="list-header__col list-header__col--email">Email</div>
@@ -8,7 +8,16 @@
   <div class="list-header__col list-header__col--chevron"></div>
 </div>
 
-<!-- Virtual scroll viewport — all items are exactly 56px so itemSize is accurate -->
+<!-- Live region announces filter result count to screen readers -->
+<div aria-live="polite" aria-atomic="true" class="sr-only">
+  @if (totalCount() > 0) {
+    {{ totalCount() }} users found
+  } @else {
+    No users match the current filters
+  }
+</div>
+
+<!-- Virtual scroll viewport -->
 <cdk-virtual-scroll-viewport
   itemSize="56"
   class="list-viewport"
@@ -17,10 +26,14 @@
 >
   <ng-container *cdkVirtualFor="let row of rows(); trackBy: trackRow">
     @if (row.type === 'header') {
-      <!-- Group header row — styled differently but same 56px height -->
-      <div class="group-header" role="listitem" aria-roledescription="group">
+      <div
+        class="group-header"
+        role="listitem"
+        aria-roledescription="group heading"
+        [attr.aria-label]="row.label + ' — ' + row.count + ' users'"
+      >
         <span class="group-header__label">{{ row.label }}</span>
-        <span class="group-header__count">{{ row.count }}</span>
+        <span class="group-header__count" aria-hidden="true">{{ row.count }}</span>
       </div>
     } @else {
       <app-user-item
@@ -34,7 +47,7 @@
   </ng-container>
 </cdk-virtual-scroll-viewport>
 
-<!-- Detail panel — OUTSIDE the virtual scroll so it can expand freely -->
+<!-- Detail panel outside virtual scroll -->
 @if (selectedUser()) {
   <app-user-detail
     [user]="selectedUser()!"
@@ -44,6 +57,6 @@
 }
 
 <!-- Footer -->
-<div class="list-footer" aria-live="polite" aria-atomic="true">
+<div class="list-footer" aria-live="off">
   Showing {{ totalCount() | number }} users
 </div>

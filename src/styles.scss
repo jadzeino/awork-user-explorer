@@ -108,6 +108,34 @@ html, body {
 }
 
 /* =========================================================
+   ACCESSIBILITY UTILITIES
+   ========================================================= */
+
+/* Visually hidden but available to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Consistent focus ring for all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Remove default outline only when :focus-visible is available */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =========================================================
    MICRO-ANIMATIONS
    ========================================================= */
 @keyframes fade-in-up {
