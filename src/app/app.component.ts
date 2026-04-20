@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ThemeService } from './core/services/theme.service';
-import { ViewModeService } from './core/services/view-mode.service';
 import { UsersPageComponent } from './features/users/containers/users-page/users-page.component';
 
 @Component({
@@ -12,5 +11,4 @@ import { UsersPageComponent } from './features/users/containers/users-page/users
 })
 export class AppComponent {
   readonly themeService = inject(ThemeService);
-  readonly viewModeService = inject(ViewModeService);
 }

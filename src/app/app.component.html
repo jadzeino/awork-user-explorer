@@ -5,29 +5,6 @@
     </div>
 
     <div class="app-header__actions">
-      <!-- Scroll / Pagination mode toggle -->
-      <button
-        class="app-header__view-toggle"
-        [class.app-header__view-toggle--active]="viewModeService.paginationMode()"
-        (click)="viewModeService.toggle()"
-        [attr.aria-pressed]="viewModeService.paginationMode()"
-        [title]="viewModeService.paginationMode() ? 'Switch to infinite scroll' : 'Switch to pagination'"
-      >
-        @if (viewModeService.paginationMode()) {
-          <!-- Active: pagination mode — show scroll icon to switch back -->
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-          </svg>
-          Pages
-        } @else {
-          <!-- Inactive: scroll mode — show pages icon to switch -->
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
-          </svg>
-          Pages
-        }
-      </button>
-
       <button
         class="app-header__theme-toggle"
         (click)="themeService.toggle()"
