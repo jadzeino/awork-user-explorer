@@ -73,22 +73,6 @@
     &::placeholder { font-weight: normal; font-size: 11px; color: var(--text-muted); }
   }
 
-  &__btn {
-    height: 28px;
-    padding: 0 $spacing-m;
-    border-radius: 6px;
-    border: none;
-    background: var(--accent-primary);
-    color: #fff;
-    font-size: $font-size-small;
-    font-weight: $font-weight-semi;
-    cursor: pointer;
-    transition: background 0.1s;
-
-    &:hover:not(:disabled) { background: var(--accent-primary-hover); }
-    &:disabled { opacity: 0.45; cursor: not-allowed; }
-  }
-
   &__clear {
     height: 28px;
     padding: 0 $spacing-m;
