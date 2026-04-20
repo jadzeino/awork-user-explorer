@@ -39,16 +39,21 @@
       <dt>Age</dt>
       <dd>{{ user().age }}</dd>
 
-      <dt>Nationality</dt>
-      <dd>{{ user().nat }}</dd>
+      <dt>Date of birth</dt>
+      <dd>{{ user().dob | date:'mediumDate' }}</dd>
 
-      <dt>Location</dt>
+      <dt>Nationality</dt>
       <dd>
-        {{ user().city }}@if (user().state) {, {{ user().state }}}, {{ user().country }}
+        <span class="detail__nat-badge">{{ user().nat }}</span>
+        <span class="detail__nat-peers">· {{ natCount() }} in this list</span>
       </dd>
 
-      <dt>Same nationality</dt>
-      <dd>{{ natCount() }} users</dd>
+      <dt>Address</dt>
+      <dd class="detail__address">
+        <span>{{ user().street }}</span>
+        <span>{{ user().city }}@if (user().state) {, {{ user().state }}} {{ user().postcode }}</span>
+        <span>{{ user().country }}</span>
+      </dd>
     </dl>
   </div>
 </div>

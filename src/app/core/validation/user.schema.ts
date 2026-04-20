@@ -70,8 +70,11 @@ export function mapApiUserToUser(raw: ApiUserResult): User {
     nat: raw.nat,
     gender: raw.gender,
     age: raw.dob.age,
+    dob: raw.dob.date,
+    street: `${raw.location.street.number} ${raw.location.street.name}`,
     city: raw.location.city,
     state: raw.location.state,
+    postcode: String(raw.location.postcode),
     country: raw.location.country,
   };
 }

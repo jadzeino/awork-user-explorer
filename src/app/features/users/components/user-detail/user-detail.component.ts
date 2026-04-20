@@ -2,11 +2,13 @@ import {
   Component, ChangeDetectionStrategy, input, output,
   inject, ElementRef, HostListener, AfterViewInit
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { User } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-user-detail',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DatePipe],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss',
 })

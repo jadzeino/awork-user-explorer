@@ -9,8 +9,11 @@ export interface User {
   nat: string;
   gender: string;
   age: number;
+  dob: string;
+  street: string;
   city: string;
   state: string;
+  postcode: string;
   country: string;
 }
 
