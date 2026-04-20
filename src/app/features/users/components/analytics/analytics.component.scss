@@ -18,8 +18,8 @@
   }
 
   &__card {
-    background: var(--surface-bg);
-    border: 1px solid var(--border-color);
+    background: var(--surface-elevated);
+    border: 1px solid color-mix(in srgb, var(--accent-primary) 20%, var(--border-color));
     border-radius: 10px;
     padding: $spacing-m $spacing-m $spacing-s;
     display: flex;

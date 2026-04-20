@@ -94,7 +94,9 @@
   /* ── Analytics section (collapsible) ── */
   &__analytics-section {
     flex-shrink: 0;
-    border-bottom: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--accent-primary) 5%, var(--surface-elevated));
+    border-top: 1px solid color-mix(in srgb, var(--accent-primary) 25%, var(--border-color));
+    border-bottom: 2px solid color-mix(in srgb, var(--accent-primary) 25%, var(--border-color));
   }
 
   &__analytics-toggle {
@@ -104,7 +106,7 @@
     width: 100%;
     padding: $spacing-s $spacing-l;
     border: none;
-    background: var(--surface-elevated);
+    background: transparent;
     color: var(--text-muted);
     font-size: $font-size-small;
     font-weight: $font-weight-semi;
@@ -121,7 +123,7 @@
 
     &--open svg { transform: rotate(180deg); }
 
-    &:hover { background: var(--row-hover); }
+    &:hover { background: color-mix(in srgb, var(--accent-primary) 8%, transparent); }
   }
 
   /* ── Search / toolbar row ── */
