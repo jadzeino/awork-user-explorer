@@ -8,10 +8,24 @@ A production-ready Angular 20 application that fetches, groups, filters, and dis
 
 ```bash
 npm install
-npm start         # dev server at http://localhost:4200
-npm run build     # production build
-npm test          # unit tests (Karma + Jasmine)
+npm start              # dev server at http://localhost:4200
+npm run build:prod     # production build
+npm test               # unit tests (Karma + Jasmine, watch mode)
+npm run test:ci        # unit tests (single run, ChromeHeadless)
+npm run lint           # ESLint (0 warnings allowed)
+npm run format         # Prettier auto-format
+npm run format:check   # Prettier check (CI-friendly)
 ```
+
+### Agent Mode (optional)
+
+Agent Mode translates natural language queries into filters using the [Groq API](https://console.groq.com) (free tier — no credit card required).
+
+1. Copy the environment template: `cp src/environments/environment.example.ts src/environments/environment.ts`
+2. Get a free API key at **console.groq.com/keys**
+3. Paste it as `groqApiKey` in `src/environments/environment.ts`
+
+Without a key, the app works fully — Agent Mode shows a configuration notice and is disabled.
 
 ---
 
@@ -42,7 +56,7 @@ src/app/
 5,000 users rendered as a flat `VirtualRow[]` array combining group headers and user rows. CDK `cdk-virtual-scroll-viewport` with `itemSize="56"` keeps the DOM to ~20 rendered nodes regardless of dataset size.
 
 ### Web Worker
-All grouping and filtering runs in `grouping.worker.ts` off the main thread. The `GroupingService` uses a "latest-wins" pending-response pattern: if a new request arrives before the previous one completes, the old Subject is silently replaced. `switchMap` in the container disposes stale subscriptions. Synchronous `runGrouping()` fallback is used when `Worker` construction fails (test environments, SSR).
+All grouping and filtering runs in `grouping.worker.ts` off the main thread. Each request carries a monotonic `__id`; the worker echoes it back so `GroupingService` resolves only the matching `Subject` via a `Map<id, Subject>`. Concurrent requests are handled safely — no stale results. `switchMap` in the container disposes superseded requests. Synchronous `runGrouping()` fallback is used when `Worker` construction fails (test environments, SSR).
 
 ### Zod Validation
 `ApiResponseSchema` validates the raw HTTP response at the boundary. On schema mismatch, it logs the issues and falls back to a lenient filter rejecting only records missing `uuid`, `name.first`, or `email` — partial API degradation never crashes the app.
@@ -93,7 +107,8 @@ Search queries strip `< > " ' &` before the substring match in the worker. Age i
 npm test
 ```
 
-24 unit tests covering:
-- `grouping.logic`: all groupBy modes, all filter types, combined filters, edge cases, XSS safety
+Tests covering:
+- `grouping.logic`: all groupBy modes, all filter types (gender, nat, age, city, country, state), sort orders (age-asc, age-desc, name), combined filters, edge cases, XSS safety
+- `filter.service`: `parseNaturalLanguage` — gender, age patterns, nationality detection, sort/group directives, remainder extraction, combined queries
 - `user.schema`: valid mapping, Zod graceful fallback, UUID image URL
 - `users.service`: HTTP mapping, `shareReplay` deduplication, cache behaviour

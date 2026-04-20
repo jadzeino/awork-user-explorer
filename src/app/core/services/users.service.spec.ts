@@ -43,6 +43,8 @@ describe('UsersService', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
+    // Clear sessionStorage so the service always hits the network in tests
+    sessionStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });

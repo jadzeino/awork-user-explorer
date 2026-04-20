@@ -12,9 +12,12 @@ const makeUser = (overrides: Partial<User> = {}): User => ({
   nat: 'US',
   gender: 'female',
   age: 30,
+  dob: '1994-01-01T00:00:00.000Z',
   city: 'New York',
   state: 'NY',
   country: 'United States',
+  street: '123 Main St',
+  postcode: '10001',
   ...overrides,
 });
 
@@ -175,6 +178,87 @@ describe('runGrouping', () => {
       );
       const result = runGrouping({ ...BASE_REQ, filterGender: 'female', users });
       expect(result.totalCount).toBe(3);
+    });
+  });
+
+  describe('sorting', () => {
+    it('sorts by age ascending (age-asc)', () => {
+      // All users share the same initial so they stay in one group — sort order is preserved
+      const users = [
+        makeUser({ id: '1', firstname: 'Anna', age: 50 }),
+        makeUser({ id: '2', firstname: 'Amy', age: 20 }),
+        makeUser({ id: '3', firstname: 'Alice', age: 35 }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, sortBy: 'age-asc', groupBy: 'letter', users });
+      const allUsers = result.groups.flatMap(g => g.users);
+      expect(allUsers[0].age).toBeLessThanOrEqual(allUsers[1].age);
+      expect(allUsers[1].age).toBeLessThanOrEqual(allUsers[2].age);
+    });
+
+    it('sorts by age descending (age-desc)', () => {
+      const users = [
+        makeUser({ id: '1', firstname: 'Alice', age: 20 }),
+        makeUser({ id: '2', firstname: 'Amy', age: 50 }),
+        makeUser({ id: '3', firstname: 'Anna', age: 35 }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, sortBy: 'age-desc', groupBy: 'letter', users });
+      const allUsers = result.groups.flatMap(g => g.users);
+      expect(allUsers[0].age).toBeGreaterThanOrEqual(allUsers[1].age);
+      expect(allUsers[1].age).toBeGreaterThanOrEqual(allUsers[2].age);
+    });
+
+    it('sorts by name (name)', () => {
+      const users = [
+        makeUser({ id: '1', firstname: 'Anna', lastname: 'X' }),
+        makeUser({ id: '2', firstname: 'Amy', lastname: 'X' }),
+        makeUser({ id: '3', firstname: 'Alice', lastname: 'X' }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, sortBy: 'name', groupBy: 'letter', users });
+      const allUsers = result.groups.flatMap(g => g.users);
+      expect(allUsers[0].firstname).toBe('Alice');
+      expect(allUsers[1].firstname).toBe('Amy');
+      expect(allUsers[2].firstname).toBe('Anna');
+    });
+  });
+
+  describe('location filters', () => {
+    it('filters by country', () => {
+      const users = [
+        makeUser({ id: '1', country: 'Germany' }),
+        makeUser({ id: '2', country: 'France' }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, filterCountry: 'Germany', users });
+      expect(result.totalCount).toBe(1);
+      expect(result.groups.flatMap(g => g.users)[0].country).toBe('Germany');
+    });
+
+    it('filters by city', () => {
+      const users = [
+        makeUser({ id: '1', city: 'Berlin' }),
+        makeUser({ id: '2', city: 'Paris' }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, filterCity: 'Berlin', users });
+      expect(result.totalCount).toBe(1);
+      expect(result.groups.flatMap(g => g.users)[0].city).toBe('Berlin');
+    });
+
+    it('filters by state', () => {
+      const users = [
+        makeUser({ id: '1', state: 'Bavaria' }),
+        makeUser({ id: '2', state: 'Hesse' }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, filterState: 'Bavaria', users });
+      expect(result.totalCount).toBe(1);
+    });
+
+    it('combines city and country filters', () => {
+      const users = [
+        makeUser({ id: '1', city: 'Berlin', country: 'Germany' }),
+        makeUser({ id: '2', city: 'Berlin', country: 'Australia' }),
+        makeUser({ id: '3', city: 'Munich', country: 'Germany' }),
+      ];
+      const result = runGrouping({ ...BASE_REQ, filterCity: 'Berlin', filterCountry: 'Germany', users });
+      expect(result.totalCount).toBe(1);
     });
   });
 });

@@ -118,7 +118,7 @@ export function parseNaturalLanguage(query: string): NLParseResult {
   }
 
   // Group by
-  const groupM = w.match(/grouped?\s+by\s+(age|nat(?:ionality)?|letter|name)/);
+  const groupM = w.match(/group(?:ed)?\s+by\s+(age|nat(?:ionality)?|letter|name)/);
   if (groupM) {
     if (groupM[1] === 'age') filters.groupBy = 'age';
     else if (groupM[1].startsWith('nat')) filters.groupBy = 'nationality';
@@ -159,6 +159,25 @@ export class FilterService {
     this.state.update(s => ({ ...s, ...patch }));
   }
 
+  /** Resets only filter/search fields — preserves groupBy, sortBy, compareMode, agentMode. */
+  resetFilters(): void {
+    this.state.update(s => ({
+      ...s,
+      searchQuery: '',
+      searchFields: [],
+      filterGender: '',
+      filterNats: [],
+      filterAgeMin: 0,
+      filterAgeMax: 0,
+      filterCountry: '',
+      filterState: '',
+      filterCity: '',
+      nlQuery: '',
+      sortBy: '',
+    }));
+  }
+
+  /** Full reset — restores every field to its initial value. */
   reset(): void {
     this.state.set({ ...INITIAL });
   }

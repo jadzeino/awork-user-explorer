@@ -19,7 +19,7 @@
         maxlength="1"
         placeholder="A–Z"
         [value]="letterJumpValue()"
-        (input)="onLetterJumpInput($event); applyLetterJump()"
+        (input)="onLetterInput($event)"
         aria-label="Jump to letter group"
       />
       @if (letterJumpValue()) {

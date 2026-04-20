@@ -77,13 +77,15 @@ export class FacetedFiltersComponent {
   }
 
   onAgeMinInput(event: Event): void {
-    const value = parseInt((event.target as HTMLInputElement).value, 10);
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const value = parseInt(event.target.value, 10);
     const max = this.displayAgeMax();
     this.filterService.update({ filterAgeMin: Math.min(value, max - 1) });
   }
 
   onAgeMaxInput(event: Event): void {
-    const value = parseInt((event.target as HTMLInputElement).value, 10);
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const value = parseInt(event.target.value, 10);
     const min = this.displayAgeMin();
     this.filterService.update({ filterAgeMax: Math.max(value, min + 1) });
   }

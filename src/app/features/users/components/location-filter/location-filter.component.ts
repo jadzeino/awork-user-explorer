@@ -60,14 +60,16 @@ export class LocationFilterComponent {
   }
 
   onCityInput(event: Event): void {
-    const raw = (event.target as HTMLInputElement).value;
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const raw = event.target.value;
     // Accept the value only when it matches a real city (or is empty)
     const value = this.cities().includes(raw) || raw === '' ? raw : this.state().filterCity;
     this.filterService.update({ filterCity: value });
   }
 
   onCityChange(event: Event): void {
-    const raw = (event.target as HTMLInputElement).value;
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const raw = event.target.value;
     this.filterService.update({ filterCity: raw });
   }
 

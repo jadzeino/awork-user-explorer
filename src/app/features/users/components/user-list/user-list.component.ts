@@ -71,7 +71,7 @@ export class UserListComponent {
     this.filterService.state().groupBy === 'letter'
   );
 
-  readonly hasActiveFilters = computed(() => this.filterService.hasActiveFilters());
+  readonly hasActiveFilters = this.filterService.hasActiveFilters;
 
   readonly availableLetters = computed<string[]>(() =>
     this.rows()
@@ -86,21 +86,22 @@ export class UserListComponent {
     }
   }
 
-  onLetterJumpInput(event: Event): void {
-    const val = (event.target as HTMLInputElement).value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 1);
-    (event.target as HTMLInputElement).value = val;
+  onLetterInput(event: Event): void {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const val = event.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 1);
+    event.target.value = val;
     this.letterJumpValue.set(val);
+    this.applyLetterJump(val);
   }
 
-  applyLetterJump(): void {
-    const letter = this.letterJumpValue().trim().toUpperCase();
+  private applyLetterJump(letter: string): void {
     if (!letter) { this.clearLetterJump(); return; }
     const available = this.availableLetters();
     if (!available.includes(letter)) return;
     // Collapse every group except the target letter
     this.collapsedGroups.set(new Set(available.filter(l => l !== letter)));
-    // Scroll after the row array updates
-    setTimeout(() => this.scrollToLetter(letter), 50);
+    // Wait for the row array to reflect the new collapse state before scrolling
+    requestAnimationFrame(() => this.scrollToLetter(letter));
   }
 
   clearLetterJump(): void {
@@ -123,7 +124,7 @@ export class UserListComponent {
       if (available.includes(letter)) {
         event.preventDefault();
         this.letterJumpValue.set(letter);
-        this.applyLetterJump();
+        this.applyLetterJump(letter);
       }
     }
   }

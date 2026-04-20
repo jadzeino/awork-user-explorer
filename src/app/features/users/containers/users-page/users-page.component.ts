@@ -2,7 +2,7 @@ import {
   Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { switchMap, combineLatest, EMPTY, catchError, distinctUntilChanged, tap, take } from 'rxjs';
+import { switchMap, combineLatest, EMPTY, catchError, distinctUntilChanged, tap, take, shareReplay } from 'rxjs';
 import { UsersService, MAX_PAGES } from '../../../../core/services/users.service';
 import { GroupingService } from '../../../../core/services/grouping.service';
 import { FilterService } from '../../../../core/services/filter.service';
@@ -69,51 +69,55 @@ export class UsersPageComponent {
     const currentPage$ = toObservable(this.currentPage);
     const paginationMode$ = toObservable(this.viewModeService.paginationMode);
 
-    // Always use page 1 for location filter option lists
-    this.usersService.getUsers(1).pipe(
-      take(1),
-      catchError(() => EMPTY),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(users => this.allUsers.set(users));
-
     // Reset to page 1 when leaving pagination mode
     paginationMode$.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(mode => { if (!mode) this.currentPage.set(1); });
 
-    combineLatest([filterState$, currentPage$, paginationMode$]).pipe(
-      distinctUntilChanged(([f1, p1, m1], [f2, p2, m2]) =>
-        JSON.stringify(f1) === JSON.stringify(f2) && p1 === p2 && m1 === m2
-      ),
+    // Users stream: only re-fetches when page or mode changes (not on filter changes)
+    const users$ = combineLatest([currentPage$, paginationMode$]).pipe(
+      distinctUntilChanged(([p1, m1], [p2, m2]) => p1 === p2 && m1 === m2),
       tap(() => { this.loading.set(true); this.error.set(null); }),
-      switchMap(([filterState, page, paginationMode]) =>
+      switchMap(([page, paginationMode]) =>
         this.usersService.getUsers(paginationMode ? page : 1).pipe(
           catchError(err => {
             this.loading.set(false);
-            this.error.set((err as Error).message ?? 'Failed to load users');
+            this.error.set(err instanceof Error ? err.message : 'Failed to load users');
             return EMPTY;
-          }),
-          switchMap(users =>
-            this.groupingService.group({
-              users,
-              groupBy: filterState.groupBy,
-              searchQuery: filterState.searchQuery,
-              searchFields: filterState.searchFields,
-              filterGender: filterState.filterGender,
-              filterNats: filterState.filterNats,
-              filterAgeMin: filterState.filterAgeMin,
-              filterAgeMax: filterState.filterAgeMax,
-              filterCountry: filterState.filterCountry,
-              filterState: filterState.filterState,
-              filterCity: filterState.filterCity,
-              sortBy: filterState.sortBy,
-            }).pipe(
-              catchError(err => {
-                console.error('[UsersPage] Grouping error', err);
-                return EMPTY;
-              })
-            )
-          )
+          })
+        )
+      ),
+      shareReplay(1),
+    );
+
+    // Always use page 1 for location filter option lists
+    users$.pipe(
+      take(1),
+      catchError(() => EMPTY),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(users => this.allUsers.set(users));
+
+    // Filter pipeline: re-runs on filter changes without re-fetching users
+    combineLatest([users$, filterState$]).pipe(
+      switchMap(([users, filterState]) =>
+        this.groupingService.group({
+          users,
+          groupBy: filterState.groupBy,
+          searchQuery: filterState.searchQuery,
+          searchFields: filterState.searchFields,
+          filterGender: filterState.filterGender,
+          filterNats: filterState.filterNats,
+          filterAgeMin: filterState.filterAgeMin,
+          filterAgeMax: filterState.filterAgeMax,
+          filterCountry: filterState.filterCountry,
+          filterState: filterState.filterState,
+          filterCity: filterState.filterCity,
+          sortBy: filterState.sortBy,
+        }).pipe(
+          catchError(err => {
+            console.error('[UsersPage] Grouping error', err);
+            return EMPTY;
+          })
         )
       ),
       tap(() => this.loading.set(false)),

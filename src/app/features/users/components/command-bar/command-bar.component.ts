@@ -37,7 +37,8 @@ export class CommandBarComponent {
   });
 
   onInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const value = event.target.value;
     this.inputValue.set(value);
     if (!value.trim()) {
       this.filterService.update({
@@ -65,10 +66,7 @@ export class CommandBarComponent {
 
   clear(): void {
     this.inputValue.set('');
-    this.filterService.update({
-      searchQuery: '', nlQuery: '', searchFields: [],
-      filterGender: '', filterNats: [], filterAgeMin: 0, filterAgeMax: 0, filterCity: '',
-    });
+    this.filterService.resetFilters();
     this.showFieldChips.set(false);
   }
 }
