@@ -3,6 +3,7 @@ import { GroupBy, SortBy, User } from '../models/user.model';
 import { GroupingRequest } from '../../workers/grouping.logic';
 
 export type SearchField = 'name' | 'email' | 'username' | 'phone' | 'city' | 'country';
+export type CompareBy = 'gender' | 'nationality' | '';
 
 export interface FilterState {
   searchQuery: string;
@@ -17,6 +18,10 @@ export interface FilterState {
   groupBy: GroupBy;
   sortBy: SortBy | '';
   nlQuery: string;
+  compareMode: boolean;
+  compareBy: CompareBy;
+  compareA: string;
+  compareB: string;
 }
 
 const INITIAL: FilterState = {
@@ -32,6 +37,10 @@ const INITIAL: FilterState = {
   groupBy: 'letter',
   sortBy: '',
   nlQuery: '',
+  compareMode: false,
+  compareBy: '',
+  compareA: '',
+  compareB: '',
 };
 
 const COUNTRY_NAT: Record<string, string> = {

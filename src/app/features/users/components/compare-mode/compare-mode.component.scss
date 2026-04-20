@@ -1,0 +1,167 @@
+@use 'ease/ease-import.scss' as *;
+
+:host { display: block; }
+
+.compare {
+  border-top: 1px solid var(--border-color);
+  background: var(--surface-elevated);
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-m;
+    padding: $spacing-m $spacing-l;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--accent-primary); }
+  }
+
+  /* Segmented control */
+  &__seg {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--input-bg);
+  }
+
+  &__seg-btn {
+    padding: 0 $spacing-m;
+    height: 28px;
+    border: none;
+    border-right: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+
+    &:last-child { border-right: none; }
+    &:hover { background: var(--row-hover); color: var(--text-primary); }
+    &--active { background: var(--accent-primary); color: #fff; &:hover { background: var(--accent-primary-hover); } }
+  }
+
+  /* Nationality pickers */
+  &__pickers {
+    display: flex;
+    align-items: center;
+    gap: $spacing-s;
+    flex-wrap: wrap;
+  }
+
+  &__picker {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+  }
+
+  &__picker-label {
+    font-size: 11px;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+
+    .compare__picker--a & { color: var(--compare-a); }
+    .compare__picker--b & { color: var(--compare-b); }
+  }
+
+  &__select-wrap { position: relative; }
+
+  &__select {
+    height: 28px;
+    padding: 0 28px 0 $spacing-s;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: $font-size-small;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus { border-color: var(--accent-primary); }
+    option { background: var(--surface-elevated); }
+  }
+
+  &__vs {
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Side-by-side panels */
+  &__panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+
+    @include media-breakpoint-down(m) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__panel {
+    padding: $spacing-m $spacing-l $spacing-l;
+
+    &--a {
+      border-right: 1px solid var(--border-color);
+      @include media-breakpoint-down(m) { border-right: none; border-bottom: 1px solid var(--border-color); }
+    }
+  }
+
+  &__panel-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-s;
+    margin-bottom: $spacing-s;
+  }
+
+  &__panel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    &--a { background: var(--compare-a); }
+    &--b { background: var(--compare-b); }
+  }
+
+  &__panel-title {
+    font-size: $font-size-normal;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    flex: 1;
+  }
+
+  &__panel-count {
+    font-size: $font-size-small;
+    color: var(--text-muted);
+    background: var(--surface-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+
+  &__empty {
+    padding: $spacing-l $spacing-l;
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-style: italic;
+    margin: 0;
+  }
+}

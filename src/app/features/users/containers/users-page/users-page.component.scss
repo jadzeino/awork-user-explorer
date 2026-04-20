@@ -28,6 +28,42 @@
     padding: $spacing-m $spacing-l;
     border-bottom: 1px solid var(--border-color);
     background: var(--surface-elevated);
+    display: flex;
+    align-items: center;
+    gap: $spacing-m;
+
+    app-command-bar { flex: 1; min-width: 0; }
+  }
+
+  &__compare-toggle {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    height: 44px;
+    padding: 0 $spacing-m;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+
+    svg { width: 16px; height: 16px; }
+
+    &:hover {
+      background: var(--row-hover);
+      color: var(--text-primary);
+    }
+
+    &--active {
+      background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
   }
 
   &__skeleton {

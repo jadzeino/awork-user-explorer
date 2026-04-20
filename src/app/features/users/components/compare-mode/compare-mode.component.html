@@ -1,0 +1,81 @@
+<div class="compare">
+
+  <!-- Controls row -->
+  <div class="compare__controls">
+    <span class="compare__title">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 12a1 1 0 01-1-1v-1.586l-2.293 2.293a1 1 0 01-1.414-1.414L9.586 13H8a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-1 1z"/>
+      </svg>
+      Compare Mode
+    </span>
+
+    <!-- Compare by segmented control -->
+    <div class="compare__seg" role="group" aria-label="Compare by">
+      @for (opt of COMPARE_OPTIONS; track opt.value) {
+        <button
+          class="compare__seg-btn"
+          [class.compare__seg-btn--active]="state().compareBy === opt.value"
+          (click)="setCompareBy(opt.value)"
+          type="button"
+        >{{ opt.label }}</button>
+      }
+    </div>
+
+    <!-- Nationality pickers (only when compareBy = nationality) -->
+    @if (state().compareBy === 'nationality') {
+      <div class="compare__pickers">
+        <div class="compare__picker compare__picker--a">
+          <span class="compare__picker-label">Group A</span>
+          <div class="compare__select-wrap">
+            <select class="compare__select" [value]="state().compareA" (change)="onSegmentChange('A', $event)" aria-label="Group A country">
+              <option value="">Pick country…</option>
+              @for (c of countries(); track c) {
+                <option [value]="c">{{ c }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <span class="compare__vs">vs</span>
+        <div class="compare__picker compare__picker--b">
+          <span class="compare__picker-label">Group B</span>
+          <div class="compare__select-wrap">
+            <select class="compare__select" [value]="state().compareB" (change)="onSegmentChange('B', $event)" aria-label="Group B country">
+              <option value="">Pick country…</option>
+              @for (c of countries(); track c) {
+                <option [value]="c">{{ c }}</option>
+              }
+            </select>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Side-by-side panels -->
+  @if (state().compareBy && (groupAUsers().length > 0 || groupBUsers().length > 0)) {
+    <div class="compare__panels">
+
+      <div class="compare__panel compare__panel--a">
+        <div class="compare__panel-header">
+          <span class="compare__panel-dot compare__panel-dot--a"></span>
+          <span class="compare__panel-title">{{ labelA() }}</span>
+          <span class="compare__panel-count">{{ groupAUsers().length }} users</span>
+        </div>
+        <app-analytics [users]="groupAUsers()" />
+      </div>
+
+      <div class="compare__panel compare__panel--b">
+        <div class="compare__panel-header">
+          <span class="compare__panel-dot compare__panel-dot--b"></span>
+          <span class="compare__panel-title">{{ labelB() }}</span>
+          <span class="compare__panel-count">{{ groupBUsers().length }} users</span>
+        </div>
+        <app-analytics [users]="groupBUsers()" />
+      </div>
+
+    </div>
+  } @else if (state().compareBy) {
+    <p class="compare__empty">Select segments above to compare side by side.</p>
+  }
+
+</div>

@@ -11,13 +11,14 @@ import { AnalyticsComponent } from '../../components/analytics/analytics.compone
 import { CommandBarComponent } from '../../components/command-bar/command-bar.component';
 import { FacetedFiltersComponent } from '../../components/faceted-filters/faceted-filters.component';
 import { LocationFilterComponent } from '../../components/location-filter/location-filter.component';
+import { CompareModeComponent } from '../../components/compare-mode/compare-mode.component';
 import { SkeletonComponent } from '../../../../shared/components/skeleton/skeleton.component';
 import { GroupingResult, User, UserGroup } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-users-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UserListComponent, AnalyticsComponent, CommandBarComponent, FacetedFiltersComponent, LocationFilterComponent, SkeletonComponent],
+  imports: [UserListComponent, AnalyticsComponent, CommandBarComponent, FacetedFiltersComponent, LocationFilterComponent, CompareModeComponent, SkeletonComponent],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.scss',
 })
