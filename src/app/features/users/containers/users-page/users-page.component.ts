@@ -14,12 +14,13 @@ import { LocationFilterComponent } from '../../components/location-filter/locati
 import { CompareModeComponent } from '../../components/compare-mode/compare-mode.component';
 import { SkeletonComponent } from '../../../../shared/components/skeleton/skeleton.component';
 import { SavedFiltersComponent } from '../../components/saved-filters/saved-filters.component';
+import { UserDetailComponent } from '../../components/user-detail/user-detail.component';
 import { GroupingResult, User, UserGroup } from '../../../../core/models/user.model';
 
 @Component({
   selector: 'app-users-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [UserListComponent, AnalyticsComponent, CommandBarComponent, FacetedFiltersComponent, LocationFilterComponent, CompareModeComponent, SkeletonComponent, SavedFiltersComponent],
+  imports: [UserListComponent, AnalyticsComponent, CommandBarComponent, FacetedFiltersComponent, LocationFilterComponent, CompareModeComponent, SkeletonComponent, SavedFiltersComponent, UserDetailComponent],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.scss',
 })
@@ -34,10 +35,23 @@ export class UsersPageComponent {
   readonly groups = signal<UserGroup[]>([]);
   readonly totalCount = signal(0);
   readonly allUsers = signal<User[]>([]);
+  readonly selectedUser = signal<User | null>(null);
+  readonly analyticsOpen = signal(true);
+  readonly leftOpen = signal(true);
 
   readonly filteredUsers = computed<User[]>(() =>
     this.groups().flatMap(g => g.users)
   );
+
+  readonly selectedNatCount = computed(() => {
+    const u = this.selectedUser();
+    if (!u) return 0;
+    return this.filteredUsers().filter(fu => fu.nat === u.nat).length;
+  });
+
+  onUserSelect(user: User): void {
+    this.selectedUser.update(prev => prev?.id === user.id ? null : user);
+  }
 
   readonly skeletonRows = Array.from({ length: 12 });
 

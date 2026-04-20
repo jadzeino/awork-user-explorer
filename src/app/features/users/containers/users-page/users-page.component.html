@@ -1,69 +1,119 @@
 <div class="users-page">
 
-  @if (error()) {
-    <div class="users-page__error" role="alert">
-      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-      </svg>
-      <span>{{ error() }}</span>
+  <!-- ── Left panel — Filters ── -->
+  <aside class="users-page__left" [class.users-page__left--open]="leftOpen()">
+    <app-faceted-filters />
+    <app-location-filter [users]="allUsers()" />
+    <app-saved-filters />
+  </aside>
+
+  <!-- ── Center panel — List ── -->
+  <main class="users-page__center">
+
+    @if (error()) {
+      <div class="users-page__error" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <!-- Analytics (collapsible) -->
+    @if (!loading()) {
+      <div class="users-page__analytics-section">
+        <button
+          class="users-page__analytics-toggle"
+          [class.users-page__analytics-toggle--open]="analyticsOpen()"
+          (click)="analyticsOpen.set(!analyticsOpen())"
+          type="button"
+          [attr.aria-expanded]="analyticsOpen()"
+        >
+          <span>Analytics</span>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+        @if (analyticsOpen()) {
+          <app-analytics [users]="filteredUsers()" />
+        }
+      </div>
+    }
+
+    <!-- Compare Mode panel -->
+    @if (!loading() && filterService.state().compareMode) {
+      <app-compare-mode [users]="filteredUsers()" />
+    }
+
+    <!-- Command bar + compare toggle -->
+    <div class="users-page__search">
+      <!-- Mobile: left panel toggle -->
+      <button
+        class="users-page__filter-toggle"
+        (click)="leftOpen.set(!leftOpen())"
+        type="button"
+        aria-label="Toggle filters"
+        title="Toggle filters"
+      >
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <app-command-bar />
+      <button
+        class="users-page__compare-toggle"
+        [class.users-page__compare-toggle--active]="filterService.state().compareMode"
+        (click)="filterService.update({ compareMode: !filterService.state().compareMode })"
+        type="button"
+        [attr.aria-pressed]="filterService.state().compareMode"
+        title="Toggle compare mode"
+      >
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 12a1 1 0 01-1-1v-1.586l-2.293 2.293a1 1 0 01-1.414-1.414L9.586 13H8a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-1 1z"/>
+        </svg>
+        Compare
+      </button>
     </div>
-  }
 
-  <!-- ── Insight layer ── -->
-  @if (!loading()) {
-    <app-analytics [users]="filteredUsers()" />
-  }
+    <!-- User list or skeleton -->
+    @if (loading()) {
+      <div class="users-page__skeleton" aria-label="Loading users" aria-busy="true">
+        @for (row of skeletonRows; track $index) {
+          <div class="users-page__skeleton-row">
+            <app-skeleton shape="circle" width="40px" height="40px" />
+            <app-skeleton width="160px" height="14px" />
+            <app-skeleton width="200px" height="14px" />
+            <app-skeleton width="120px" height="14px" />
+            <app-skeleton width="48px" height="20px" />
+          </div>
+        }
+      </div>
+    } @else {
+      <app-user-list
+        [groups]="groups()"
+        [totalCount]="totalCount()"
+        [selectedUser]="selectedUser()"
+        (userSelect)="onUserSelect($event)"
+      />
+    }
+  </main>
 
-  <!-- ── Compare Mode panel ── -->
-  @if (!loading() && filterService.state().compareMode) {
-    <app-compare-mode [users]="filteredUsers()" />
-  }
-
-  <!-- ── Command bar + compare toggle ── -->
-  <div class="users-page__search">
-    <app-command-bar />
-    <button
-      class="users-page__compare-toggle"
-      [class.users-page__compare-toggle--active]="filterService.state().compareMode"
-      (click)="filterService.update({ compareMode: !filterService.state().compareMode })"
-      type="button"
-      [attr.aria-pressed]="filterService.state().compareMode"
-      title="Toggle compare mode"
-    >
-      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H6.414l2.293 2.293a1 1 0 11-1.414 1.414L5 6.414V8a1 1 0 01-2 0V4zm9 12a1 1 0 01-1-1v-1.586l-2.293 2.293a1 1 0 01-1.414-1.414L9.586 13H8a1 1 0 010-2h4a1 1 0 011 1v4a1 1 0 01-1 1z"/>
-      </svg>
-      Compare
-    </button>
-  </div>
-
-  <!-- ── Faceted filters ── -->
-  <app-faceted-filters />
-
-  <!-- ── Location filter ── -->
-  <app-location-filter [users]="allUsers()" />
-
-  <!-- ── Saved filters ── -->
-  <app-saved-filters />
-
-  <!-- ── User list or skeleton ── -->
-  @if (loading()) {
-    <div class="users-page__skeleton" aria-label="Loading users" aria-busy="true">
-      @for (row of skeletonRows; track $index) {
-        <div class="users-page__skeleton-row">
-          <app-skeleton shape="circle" width="40px" height="40px" />
-          <app-skeleton width="160px" height="14px" />
-          <app-skeleton width="200px" height="14px" />
-          <app-skeleton width="120px" height="14px" />
-          <app-skeleton width="48px" height="20px" />
-        </div>
-      }
-    </div>
-  } @else {
-    <app-user-list
-      [groups]="groups()"
-      [totalCount]="totalCount()"
-    />
-  }
+  <!-- ── Right panel — User detail ── -->
+  <aside class="users-page__right">
+    @if (selectedUser()) {
+      <app-user-detail
+        [user]="selectedUser()!"
+        [natCount]="selectedNatCount()"
+        (close)="selectedUser.set(null)"
+      />
+    } @else {
+      <div class="users-page__detail-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+        </svg>
+        <p>Select a user to view details</p>
+      </div>
+    }
+  </aside>
 
 </div>

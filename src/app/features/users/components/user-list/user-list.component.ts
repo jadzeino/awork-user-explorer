@@ -1,11 +1,10 @@
 import {
-  Component, ChangeDetectionStrategy, input, computed, signal,
+  Component, ChangeDetectionStrategy, input, output, computed, signal,
   ViewChild, HostListener, inject
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { UserItemComponent } from '../user-item/user-item.component';
-import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { UserGroup, User } from '../../../../core/models/user.model';
 import { FilterService } from '../../../../core/services/filter.service';
 
@@ -17,19 +16,18 @@ export type VirtualRow =
 @Component({
   selector: 'app-user-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, ScrollingModule, UserItemComponent, UserDetailComponent],
+  imports: [DecimalPipe, ScrollingModule, UserItemComponent],
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss',
 })
 export class UserListComponent {
   readonly groups = input.required<UserGroup[]>();
   readonly totalCount = input.required<number>();
+  readonly selectedUser = input<User | null>(null);
+  readonly userSelect = output<User>();
 
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   private readonly filterService = inject(FilterService);
-
-  /** Selected user for detail panel (lives outside virtual scroll) */
-  readonly selectedUser = signal<User | null>(null);
 
   /** Set of group labels that are currently collapsed */
   readonly collapsedGroups = signal<Set<string>>(new Set());
@@ -71,12 +69,6 @@ export class UserListComponent {
     });
   }
 
-  readonly selectedNatCount = computed(() => {
-    const u = this.selectedUser();
-    if (!u) return 0;
-    return this.natCounts().get(u.nat) ?? 0;
-  });
-
   readonly isLetterGroupBy = computed(() =>
     this.filterService.state().groupBy === 'letter'
   );
@@ -111,12 +103,4 @@ export class UserListComponent {
     return row.type === 'header' ? `h-${row.label}` : `u-${row.user.id}`;
   }
 
-  onUserSelect(user: User): void {
-    // Toggle: clicking the same user again closes the panel
-    this.selectedUser.update(prev => (prev?.id === user.id ? null : user));
-  }
-
-  closeDetail(): void {
-    this.selectedUser.set(null);
-  }
 }

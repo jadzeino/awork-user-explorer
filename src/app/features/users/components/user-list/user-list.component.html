@@ -53,7 +53,7 @@
           [user]="row.user"
           [natCount]="row.natCount"
           [isSelected]="selectedUser()?.id === row.user.id"
-          (select)="onUserSelect($event)"
+          (select)="userSelect.emit($event)"
         />
       }
     </ng-container>
@@ -72,15 +72,6 @@
     </nav>
   }
 </div>
-
-<!-- Detail panel outside virtual scroll -->
-@if (selectedUser()) {
-  <app-user-detail
-    [user]="selectedUser()!"
-    [natCount]="selectedNatCount()"
-    (close)="closeDetail()"
-  />
-}
 
 <!-- Footer -->
 <div class="list-footer" aria-live="off">

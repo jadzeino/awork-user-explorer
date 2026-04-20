@@ -23,15 +23,6 @@ export class UserDetailComponent implements AfterViewInit {
     btn?.focus();
   }
 
-  /** Close when clicking the backdrop (the ::before pseudo-element area) */
-  @HostListener('click', ['$event'])
-  onHostClick(event: MouseEvent): void {
-    const panel = this.el.nativeElement.querySelector('.detail') as HTMLElement;
-    if (panel && !panel.contains(event.target as Node)) {
-      this.close.emit();
-    }
-  }
-
   /** Close on Escape key */
   @HostListener('document:keydown.escape')
   onEscape(): void {

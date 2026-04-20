@@ -4,26 +4,114 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
 }
 
 .users-page {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 280px 1fr 360px;
+  grid-template-rows: 1fr;
   flex: 1;
+  min-height: 0;
+  overflow: hidden;
 
+  /* ── Left panel ── */
+  &__left {
+    grid-column: 1;
+    overflow-y: auto;
+    border-right: 1px solid var(--border-color);
+    background: var(--surface-elevated);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, width 0.2s ease;
+
+    @media (max-width: 768px) {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      z-index: 200;
+      transform: translateX(-100%);
+      box-shadow: 4px 0 16px rgba(0,0,0,0.15);
+
+      &--open { transform: translateX(0); }
+    }
+  }
+
+  /* ── Center panel ── */
+  &__center {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  /* ── Right panel ── */
+  &__right {
+    grid-column: 3;
+    border-left: 1px solid var(--border-color);
+    background: var(--surface-elevated);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width: 1024px) {
+      display: none;
+      &:has(app-user-detail) { display: flex; }
+    }
+  }
+
+  /* ── Error banner ── */
   &__error {
     display: flex;
     align-items: center;
     gap: $spacing-m;
-    padding: $spacing-l $spacing-xxl;
+    padding: $spacing-m $spacing-l;
     background: $color-red-o-50;
     color: $color-red-900;
     border-bottom: 1px solid $color-red-700;
     font-size: $font-size-normal;
+    flex-shrink: 0;
 
     svg { width: 20px; height: 20px; flex-shrink: 0; }
   }
 
+  /* ── Analytics section (collapsible) ── */
+  &__analytics-section {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__analytics-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: $spacing-s $spacing-l;
+    border: none;
+    background: var(--surface-elevated);
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.2s ease;
+    }
+
+    &--open svg { transform: rotate(180deg); }
+
+    &:hover { background: var(--row-hover); }
+  }
+
+  /* ── Search row ── */
   &__search {
     padding: $spacing-m $spacing-l;
     border-bottom: 1px solid var(--border-color);
@@ -31,8 +119,30 @@
     display: flex;
     align-items: center;
     gap: $spacing-m;
+    flex-shrink: 0;
 
     app-command-bar { flex: 1; min-width: 0; }
+  }
+
+  &__filter-toggle {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.12s;
+
+    svg { width: 18px; height: 18px; }
+
+    &:hover { background: var(--row-hover); }
+
+    @media (max-width: 768px) { display: flex; }
   }
 
   &__compare-toggle {
@@ -66,10 +176,13 @@
     }
   }
 
+  /* ── Skeleton ── */
   &__skeleton {
     display: flex;
     flex-direction: column;
     padding: $spacing-s 0;
+    flex: 1;
+    overflow: hidden;
   }
 
   &__skeleton-row {
@@ -79,5 +192,29 @@
     padding: $spacing-m $spacing-l;
     height: 56px;
     border-bottom: 1px solid var(--border-color);
+  }
+
+  /* ── Detail placeholder ── */
+  &__detail-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: $spacing-m;
+    color: var(--text-muted);
+    padding: $spacing-xxl;
+    text-align: center;
+
+    svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.3;
+    }
+
+    p {
+      margin: 0;
+      font-size: $font-size-normal;
+    }
   }
 }
