@@ -228,6 +228,61 @@
     overflow: hidden;
   }
 
+  /* ── Pagination controls ── */
+  &__pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-l;
+    padding: $spacing-m $spacing-l;
+    border-top: 1px solid var(--border-color);
+    background: var(--surface-elevated);
+    flex-shrink: 0;
+  }
+
+  &__page-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    height: 36px;
+    padding: 0 $spacing-m;
+    border: 1.5px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+
+    svg { width: 16px; height: 16px; }
+
+    &:hover:not(:disabled) {
+      background: var(--row-hover);
+      border-color: var(--accent-primary);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  &__page-info {
+    font-size: $font-size-small;
+    color: var(--text-muted);
+    text-align: center;
+
+    strong { color: var(--text-primary); }
+  }
+
+  &__page-hint {
+    color: var(--text-muted);
+    opacity: 0.7;
+
+    @media (max-width: 480px) { display: none; }
+  }
+
   &__skeleton-row {
     display: flex;
     align-items: center;

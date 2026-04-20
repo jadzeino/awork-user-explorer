@@ -7,23 +7,25 @@ import { validateAndMapUsers } from '../validation/user.schema';
 const API_URL = 'https://randomuser.me/api';
 const RESULTS_COUNT = 5000;
 const SEED = 'awork';
+export const MAX_PAGES = 5;
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private readonly http = inject(HttpClient);
+  private readonly cache = new Map<number, Observable<User[]>>();
 
-  private readonly users$: Observable<User[]> = this.http
-    .get<unknown>(`${API_URL}?results=${RESULTS_COUNT}&seed=${SEED}`)
-    .pipe(
-      map(validateAndMapUsers),
-      catchError(err => {
-        console.error('[UsersService] Failed to fetch users', err);
-        return throwError(() => new Error('Failed to load users. Please try again.'));
-      }),
-      shareReplay(1),
-    );
-
-  getUsers(): Observable<User[]> {
-    return this.users$;
+  getUsers(page = 1): Observable<User[]> {
+    if (!this.cache.has(page)) {
+      const url = `${API_URL}?results=${RESULTS_COUNT}&seed=${SEED}&page=${page}`;
+      this.cache.set(page, this.http.get<unknown>(url).pipe(
+        map(validateAndMapUsers),
+        catchError(err => {
+          console.error('[UsersService] Failed to fetch page', page, err);
+          return throwError(() => new Error('Failed to load users. Please try again.'));
+        }),
+        shareReplay(1),
+      ));
+    }
+    return this.cache.get(page)!;
   }
 }

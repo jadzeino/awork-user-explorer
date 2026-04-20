@@ -46,6 +46,35 @@
     gap: $spacing-m;
   }
 
+  &__view-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 $spacing-m;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    svg { width: 16px; height: 16px; }
+
+    &:hover {
+      background: var(--row-hover);
+      color: var(--text-primary);
+    }
+
+    &--active {
+      background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+  }
+
   &__theme-toggle {
     width: 36px;
     height: 36px;
