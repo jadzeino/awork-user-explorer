@@ -1,6 +1,11 @@
 <div class="users-page">
 
-  <!-- ── Left panel — Filters (hidden in Agent Mode) ── -->
+  <!-- ── Backdrop — closes drawers on outside click ── -->
+  @if (leftOpen()) {
+    <div class="users-page__backdrop" (click)="leftOpen.set(false)" aria-hidden="true"></div>
+  }
+
+  <!-- ── Left drawer — Filters ── -->
   @if (!filterService.state().agentMode) {
     <aside class="users-page__left" [class.users-page__left--open]="leftOpen()">
       <app-faceted-filters />
@@ -9,8 +14,8 @@
     </aside>
   }
 
-  <!-- ── Center panel — List ── -->
-  <main class="users-page__center" [class.users-page__center--full]="filterService.state().agentMode">
+  <!-- ── Center panel — always full width ── -->
+  <main class="users-page__center">
 
     @if (error()) {
       <div class="users-page__error" role="alert">
@@ -47,12 +52,12 @@
       <app-compare-mode [users]="filteredUsers()" />
     }
 
-    <!-- Mode toggle + command bar (Normal Mode only) -->
+    <!-- Mode toggle + command bar -->
     <div class="users-page__search">
       @if (!filterService.state().agentMode) {
-        <!-- Mobile: left panel toggle -->
         <button
           class="users-page__filter-toggle"
+          [class.users-page__filter-toggle--active]="leftOpen()"
           (click)="leftOpen.set(!leftOpen())"
           type="button"
           aria-label="Toggle filters"
@@ -78,7 +83,7 @@
         </button>
       }
 
-      <!-- Mode toggle button (always visible) -->
+      <!-- Mode toggle (always visible) -->
       <button
         class="users-page__mode-toggle"
         [class.users-page__mode-toggle--agent]="filterService.state().agentMode"
@@ -129,21 +134,14 @@
     }
   </main>
 
-  <!-- ── Right panel — User detail ── -->
-  <aside class="users-page__right">
+  <!-- ── Right drawer — User detail (only when a user is selected) ── -->
+  <aside class="users-page__right" [class.users-page__right--open]="!!selectedUser()">
     @if (selectedUser()) {
       <app-user-detail
         [user]="selectedUser()!"
         [natCount]="selectedNatCount()"
         (close)="selectedUser.set(null)"
       />
-    } @else {
-      <div class="users-page__detail-placeholder">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-        </svg>
-        <p>Select a user to view details</p>
-      </div>
     }
   </aside>
 

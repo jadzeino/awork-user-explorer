@@ -38,7 +38,7 @@ export class UsersPageComponent {
   readonly allUsers = signal<User[]>([]);
   readonly selectedUser = signal<User | null>(null);
   readonly analyticsOpen = signal(true);
-  readonly leftOpen = signal(true);
+  readonly leftOpen = signal(false);
 
   readonly filteredUsers = computed<User[]>(() =>
     this.groups().flatMap(g => g.users)
