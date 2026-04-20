@@ -39,7 +39,7 @@ export class UserFiltersComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       searchQuery: [s.searchQuery],
       filterGender: [s.filterGender],
-      filterNat: [s.filterNat],
+      filterNat: [s.filterNats[0] ?? ''],
       filterAgeMin: [s.filterAgeMin || ''],
       filterAgeMax: [s.filterAgeMax || ''],
       groupBy: [s.groupBy],
@@ -53,7 +53,7 @@ export class UserFiltersComponent implements OnInit, OnDestroy {
       this.filterService.update({
         searchQuery: (v.searchQuery as string) ?? '',
         filterGender: (v.filterGender as string) ?? '',
-        filterNat: (v.filterNat as string) ?? '',
+        filterNats: v.filterNat ? [(v.filterNat as string)] : [],
         filterAgeMin: Number(v.filterAgeMin) || 0,
         filterAgeMax: Number(v.filterAgeMax) || 0,
         groupBy: (v.groupBy as GroupBy) ?? 'letter',
