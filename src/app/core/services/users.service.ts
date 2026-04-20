@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, shareReplay, map, catchError, throwError } from 'rxjs';
+import { Observable, of, shareReplay, map, catchError, throwError, tap } from 'rxjs';
 import { User } from '../models/user.model';
 import { validateAndMapUsers } from '../validation/user.schema';
 
@@ -9,23 +9,47 @@ const RESULTS_COUNT = 5000;
 const SEED = 'awork';
 export const MAX_PAGES = 5;
 
+const SESSION_KEY = (page: number) => `aw-users-p${page}`;
+
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private readonly http = inject(HttpClient);
   private readonly cache = new Map<number, Observable<User[]>>();
 
   getUsers(page = 1): Observable<User[]> {
-    if (!this.cache.has(page)) {
-      const url = `${API_URL}?results=${RESULTS_COUNT}&seed=${SEED}&page=${page}`;
-      this.cache.set(page, this.http.get<unknown>(url).pipe(
-        map(validateAndMapUsers),
-        catchError(err => {
-          console.error('[UsersService] Failed to fetch page', page, err);
-          return throwError(() => new Error('Failed to load users. Please try again.'));
-        }),
-        shareReplay(1),
-      ));
+    if (this.cache.has(page)) return this.cache.get(page)!;
+
+    // Serve from sessionStorage to avoid re-hitting the API on hot-reload / refresh
+    const stored = this.readSession(page);
+    if (stored) {
+      const obs = of(stored).pipe(shareReplay(1));
+      this.cache.set(page, obs);
+      return obs;
     }
-    return this.cache.get(page)!;
+
+    const url = `${API_URL}?results=${RESULTS_COUNT}&seed=${SEED}&page=${page}`;
+    const obs = this.http.get<unknown>(url).pipe(
+      map(validateAndMapUsers),
+      tap(users => this.writeSession(page, users)),
+      catchError(err => {
+        console.error('[UsersService] Failed to fetch page', page, err);
+        return throwError(() => new Error('Failed to load users. Please try again.'));
+      }),
+      shareReplay(1),
+    );
+    this.cache.set(page, obs);
+    return obs;
+  }
+
+  private readSession(page: number): User[] | null {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY(page));
+      return raw ? (JSON.parse(raw) as User[]) : null;
+    } catch { return null; }
+  }
+
+  private writeSession(page: number, users: User[]): void {
+    try { sessionStorage.setItem(SESSION_KEY(page), JSON.stringify(users)); }
+    catch { /* quota exceeded — silently skip */ }
   }
 }
