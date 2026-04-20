@@ -83,7 +83,22 @@
         </button>
       }
 
-      <!-- Mode toggle (always visible) -->
+      <!-- Pagination toggle (always visible) -->
+      <button
+        class="users-page__mode-toggle"
+        [class.users-page__mode-toggle--agent]="viewModeService.paginationMode()"
+        (click)="viewModeService.toggle()"
+        type="button"
+        [attr.aria-pressed]="viewModeService.paginationMode()"
+        title="Toggle pagination mode"
+      >
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M2 4a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zm0 6a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zm0 6a1 1 0 011-1h6a1 1 0 110 2H3a1 1 0 01-1-1z"/>
+        </svg>
+        {{ viewModeService.paginationMode() ? 'Infinite' : 'Pages' }}
+      </button>
+
+      <!-- Agent mode toggle (always visible) -->
       <button
         class="users-page__mode-toggle"
         [class.users-page__mode-toggle--agent]="filterService.state().agentMode"
