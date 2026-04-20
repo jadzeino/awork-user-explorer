@@ -1,6 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, input, output, computed, signal,
-  ViewChild, HostListener, inject
+  ViewChild, HostListener, inject, afterNextRender
 } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { ScrollingModule, CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
@@ -131,5 +131,9 @@ export class UserListComponent {
 
   trackRow(_i: number, row: VirtualRow): string {
     return row.type === 'header' ? `h-${row.label}` : `u-${row.user.id}`;
+  }
+
+  constructor() {
+    afterNextRender(() => this.viewport?.checkViewportSize());
   }
 }
