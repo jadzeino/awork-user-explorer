@@ -29,10 +29,9 @@ export class UserListComponent {
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
   private readonly filterService = inject(FilterService);
 
-  /** Set of group labels that are currently collapsed */
   readonly collapsedGroups = signal<Set<string>>(new Set());
+  readonly letterJumpValue = signal('');
 
-  /** Pre-computed nat counts across all currently displayed users */
   readonly natCounts = computed<Map<string, number>>(() => {
     const map = new Map<string, number>();
     for (const g of this.groups()) {
@@ -43,7 +42,6 @@ export class UserListComponent {
     return map;
   });
 
-  /** Flatten groups into a uniform virtual-scroll row array */
   readonly rows = computed<VirtualRow[]>(() => {
     const counts = this.natCounts();
     const collapsed = this.collapsedGroups();
@@ -86,6 +84,28 @@ export class UserListComponent {
     }
   }
 
+  onLetterJumpInput(event: Event): void {
+    const val = (event.target as HTMLInputElement).value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 1);
+    (event.target as HTMLInputElement).value = val;
+    this.letterJumpValue.set(val);
+  }
+
+  applyLetterJump(): void {
+    const letter = this.letterJumpValue().trim().toUpperCase();
+    if (!letter) { this.clearLetterJump(); return; }
+    const available = this.availableLetters();
+    if (!available.includes(letter)) return;
+    // Collapse every group except the target letter
+    this.collapsedGroups.set(new Set(available.filter(l => l !== letter)));
+    // Scroll after the row array updates
+    setTimeout(() => this.scrollToLetter(letter), 50);
+  }
+
+  clearLetterJump(): void {
+    this.letterJumpValue.set('');
+    this.collapsedGroups.set(new Set());
+  }
+
   @HostListener('keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
     if (!this.isLetterGroupBy()) return;
@@ -94,7 +114,8 @@ export class UserListComponent {
       const available = this.availableLetters();
       if (available.includes(letter)) {
         event.preventDefault();
-        this.scrollToLetter(letter);
+        this.letterJumpValue.set(letter);
+        this.applyLetterJump();
       }
     }
   }
@@ -102,5 +123,4 @@ export class UserListComponent {
   trackRow(_i: number, row: VirtualRow): string {
     return row.type === 'header' ? `h-${row.label}` : `u-${row.user.id}`;
   }
-
 }

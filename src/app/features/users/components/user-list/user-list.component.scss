@@ -3,7 +3,6 @@
 :host {
   display: flex;
   flex-direction: column;
-  /* No min-height: 0 here — we want the card to grow to show the detail panel */
 }
 
 /* ── Column header bar ─────────────────────────────── */
@@ -40,13 +39,73 @@
   }
 }
 
+/* ── Letter jump bar ───────────────────────────────── */
+.letter-jump {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-l;
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+
+  &__label {
+    font-size: $font-size-small;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  &__input {
+    width: 40px;
+    height: 28px;
+    text-align: center;
+    border: 1.5px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: $font-size-normal;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    outline: none;
+    transition: border-color 0.12s;
+
+    &:focus { border-color: var(--accent-primary); }
+    &::placeholder { font-weight: normal; font-size: 11px; color: var(--text-muted); }
+  }
+
+  &__btn {
+    height: 28px;
+    padding: 0 $spacing-m;
+    border-radius: 6px;
+    border: none;
+    background: var(--accent-primary);
+    color: #fff;
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    transition: background 0.1s;
+
+    &:hover:not(:disabled) { background: var(--accent-primary-hover); }
+    &:disabled { opacity: 0.45; cursor: not-allowed; }
+  }
+
+  &__clear {
+    height: 28px;
+    padding: 0 $spacing-m;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    cursor: pointer;
+    transition: color 0.1s, border-color 0.1s;
+
+    &:hover { color: var(--text-primary); border-color: var(--text-muted); }
+  }
+}
+
 /* ── Virtual scroll viewport ───────────────────────── */
 .list-viewport {
-  /*
-   * A concrete height is required by CDK virtual scroll.
-   * We use a generous fixed height; the surrounding card can scroll if needed.
-   * Using calc(100vh - ...) led to too-small viewports; this is more reliable.
-   */
   height: 600px;
   flex-shrink: 0;
 }
@@ -57,7 +116,6 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 $spacing-l;
-  /* Must match itemSize="56" so CDK scroll math stays accurate */
   height: 56px;
   box-sizing: border-box;
   background: var(--group-header-bg);
@@ -110,50 +168,10 @@
   }
 }
 
-/* ── Scroll area + alphabet sidebar ───────────────── */
+/* ── Scroll area ───────────────────────────────────── */
 .list-scroll-area {
   position: relative;
   flex-shrink: 0;
-}
-
-.alpha-index {
-  position: absolute;
-  right: 4px;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1px;
-  pointer-events: none;
-  z-index: 10;
-
-  &__btn {
-    pointer-events: all;
-    width: 18px;
-    height: 18px;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 10px;
-    font-weight: $font-weight-semi;
-    cursor: pointer;
-    border-radius: 3px;
-    padding: 0;
-    line-height: 18px;
-    text-align: center;
-    transition: background 0.1s, color 0.1s;
-
-    &:hover {
-      background: var(--accent-primary);
-      color: #fff;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--accent-primary);
-      outline-offset: 1px;
-    }
-  }
 }
 
 /* ── Footer ────────────────────────────────────────── */

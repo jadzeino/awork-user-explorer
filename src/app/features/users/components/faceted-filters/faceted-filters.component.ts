@@ -27,7 +27,7 @@ export class FacetedFiltersComponent {
 
   readonly SORT_OPTIONS: { value: SortBy | ''; label: string }[] = [
     { value: '',         label: 'Default' },
-    { value: 'name',     label: 'Name A→Z' },
+    { value: 'name',     label: 'Name' },
     { value: 'age-asc',  label: 'Age ↑' },
     { value: 'age-desc', label: 'Age ↓' },
   ];

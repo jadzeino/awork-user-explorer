@@ -5,27 +5,21 @@
 .filters {
   display: flex;
   flex-direction: column;
-  gap: $spacing-s;
+  gap: $spacing-m;
   padding: $spacing-m $spacing-l;
   border-bottom: 1px solid var(--border-color);
   background: var(--surface-elevated);
 
-  &__row {
-    display: flex;
-    align-items: center;
-    gap: $spacing-m;
-    flex-wrap: wrap;
-  }
-
   &__section {
     display: flex;
-    align-items: center;
-    gap: $spacing-s;
-    flex-shrink: 0;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
 
-    &--grow { flex: 1; }
-    &--nat { align-items: flex-start; width: 100%; }
-    &--age { width: 100%; }
+  &__section-head {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
   }
 
   &__section-icon {
@@ -43,7 +37,6 @@
     letter-spacing: 0.05em;
     white-space: nowrap;
     flex-shrink: 0;
-    min-width: 55px;
   }
 
   &__chip-icon {
@@ -55,6 +48,7 @@
   /* ── Chips ─── */
   &__chips {
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
   }
 
@@ -62,10 +56,12 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    flex: 1;
   }
 
   &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     height: 28px;
     padding: 0 $spacing-s;
     border-radius: 6px;
@@ -102,28 +98,30 @@
     }
   }
 
-  /* ── Segmented control ─── */
+  /* ── Segmented control — auto-fit grid so items always fill the row ── */
   &__segmented {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+    background: var(--border-color);
+    gap: 1px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     overflow: hidden;
-    background: var(--input-bg);
   }
 
   &__segment {
-    padding: 0 $spacing-m;
+    padding: 0 $spacing-xs;
     height: 28px;
     border: none;
-    background: transparent;
+    background: var(--input-bg);
     color: var(--text-muted);
     font-size: $font-size-small;
     font-weight: $font-weight-semi;
     cursor: pointer;
     transition: background 0.1s, color 0.1s;
-    border-right: 1px solid var(--border-color);
-
-    &:last-child { border-right: none; }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
       background: var(--row-hover);
@@ -143,10 +141,10 @@
 
   /* ── Reset button ─── */
   &__reset {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
-    height: 28px;
+    height: 22px;
     padding: 0 $spacing-s;
     border-radius: 6px;
     border: 1px solid var(--border-color);
@@ -157,6 +155,7 @@
     cursor: pointer;
     transition: background 0.1s, color 0.1s, border-color 0.1s;
     flex-shrink: 0;
+    margin-left: auto;
 
     svg { width: 12px; height: 12px; }
 
@@ -167,26 +166,19 @@
     }
   }
 
-  /* ── Age range slider ─── */
-  &__age-wrap {
-    display: flex;
-    align-items: center;
-    gap: $spacing-m;
-    flex: 1;
-  }
-
+  /* ── Age label ─── */
   &__age-label {
     font-size: $font-size-small;
     font-weight: $font-weight-semi;
     color: var(--text-primary);
-    min-width: 60px;
+    margin-left: auto;
     white-space: nowrap;
   }
 
+  /* ── Age range slider ─── */
   &__range-wrap {
     position: relative;
     height: 32px;
-    flex: 1;
     display: flex;
     align-items: center;
   }
