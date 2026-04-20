@@ -4,60 +4,60 @@
    SEMANTIC TOKENS — light mode (default)
    ========================================================= */
 :root {
-  --surface-bg: #f4f7fb;
+  --surface-bg: #f8f8f8;
   --surface-elevated: #ffffff;
-  --border-color: #dbedff;
+  --border-color: #e4e4e7;
   --input-bg: #ffffff;
-  --text-primary: #081934;
-  --text-muted: #5576aa;
-  --row-hover: #f2f9ff;
-  --group-header-bg: #ebf5ff;
-  --skeleton-base: #ebf5ff;
-  --skeleton-highlight: #f2f9ff;
-  --accent-primary: #4f6ef7;
-  --accent-primary-hover: #3a59e8;
-  --accent-female: #a855f7;
-  --accent-male: #3b82f6;
-  --accent-other: #10b981;
-  --compare-a: #6366f1;
-  --compare-b: #f59e0b;
+  --text-primary: #18181b;
+  --text-muted: #71717a;
+  --row-hover: #f4f4f5;
+  --group-header-bg: #f0f0f1;
+  --skeleton-base: #e4e4e7;
+  --skeleton-highlight: #f4f4f5;
+  --accent-primary: #7c3aed;
+  --accent-primary-hover: #6d28d9;
+  --accent-female: #db2777;
+  --accent-male: #2563eb;
+  --accent-other: #059669;
+  --compare-a: #7c3aed;
+  --compare-b: #d97706;
 }
 
 /* =========================================================
    DARK MODE — activated by data-theme="dark" on <html>
    ========================================================= */
 [data-theme='dark'] {
-  --surface-bg: #0a1628;
-  --surface-elevated: #0f1e36;
-  --border-color: #1a2f52;
-  --input-bg: #0f1e36;
-  --text-primary: #e8f0fc;
-  --text-muted: #6b8ab8;
-  --row-hover: #142240;
-  --group-header-bg: #0d1a32;
-  --skeleton-base: #142240;
-  --skeleton-highlight: #1a2f52;
-  --accent-primary: #6b8eff;
-  --accent-primary-hover: #5577ff;
-  --accent-female: #c084fc;
+  --surface-bg: #09090b;
+  --surface-elevated: #18181b;
+  --border-color: #27272a;
+  --input-bg: #27272a;
+  --text-primary: #fafafa;
+  --text-muted: #a1a1aa;
+  --row-hover: #27272a;
+  --group-header-bg: #1c1c1f;
+  --skeleton-base: #27272a;
+  --skeleton-highlight: #3f3f46;
+  --accent-primary: #a78bfa;
+  --accent-primary-hover: #8b5cf6;
+  --accent-female: #f472b6;
   --accent-male: #60a5fa;
   --accent-other: #34d399;
-  --compare-a: #818cf8;
+  --compare-a: #a78bfa;
   --compare-b: #fbbf24;
 
   /* Override ease palette CSS variables for dark mode */
-  --color-white: #0f1e36;
-  --color-smoke: #0d1a32;
-  --color-ice: #0a1628;
-  --color-sky: #0d1a32;
-  --color-fog: #1a2f52;
-  --color-dust: #243d66;
-  --color-light-steel: #3a5a8a;
-  --color-steel: #6b8ab8;
-  --color-slate: #8aaad8;
-  --color-midnight: #b0c8e8;
-  --color-asphalt: #c8daf2;
-  --color-night: #e8f0fc;
+  --color-white: #18181b;
+  --color-smoke: #1c1c1f;
+  --color-ice: #27272a;
+  --color-sky: #27272a;
+  --color-fog: #3f3f46;
+  --color-dust: #52525b;
+  --color-light-steel: #71717a;
+  --color-steel: #a1a1aa;
+  --color-slate: #d4d4d8;
+  --color-midnight: #e4e4e7;
+  --color-asphalt: #f4f4f5;
+  --color-night: #fafafa;
 
   --color-text-normal: var(--text-primary);
   --color-text-light: var(--text-muted);
