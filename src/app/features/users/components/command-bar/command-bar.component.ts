@@ -40,12 +40,15 @@ export class CommandBarComponent {
     const value = (event.target as HTMLInputElement).value;
     this.inputValue.set(value);
     if (!value.trim()) {
-      this.filterService.update({ searchQuery: '', nlQuery: '' });
+      this.filterService.update({
+        searchQuery: '', nlQuery: '', filterGender: '',
+        filterNats: [], filterAgeMin: 0, filterAgeMax: 0, filterCity: '',
+      });
       return;
     }
-    // Try NL parse; always set searchQuery for keyword search too
-    const parsed = parseNaturalLanguage(value);
-    this.filterService.update({ searchQuery: value, ...parsed });
+    const { filters, remainder } = parseNaturalLanguage(value);
+    // remainder contains only unrecognised tokens — used as keyword search
+    this.filterService.update({ searchQuery: remainder, ...filters });
   }
 
   toggleField(field: SearchField): void {
@@ -62,7 +65,10 @@ export class CommandBarComponent {
 
   clear(): void {
     this.inputValue.set('');
-    this.filterService.update({ searchQuery: '', nlQuery: '', searchFields: [] });
+    this.filterService.update({
+      searchQuery: '', nlQuery: '', searchFields: [],
+      filterGender: '', filterNats: [], filterAgeMin: 0, filterAgeMax: 0, filterCity: '',
+    });
     this.showFieldChips.set(false);
   }
 }

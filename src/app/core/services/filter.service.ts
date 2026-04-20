@@ -68,47 +68,75 @@ const COUNTRY_NAT: Record<string, string> = {
   'ukrainian': 'UA', 'ukraine': 'UA',
 };
 
-export function parseNaturalLanguage(query: string): Partial<FilterState> {
+export interface NLParseResult {
+  filters: Partial<FilterState>;
+  remainder: string;
+}
+
+export function parseNaturalLanguage(query: string): NLParseResult {
   const q = query.toLowerCase().trim();
-  if (!q) return {};
-  const result: Partial<FilterState> = { nlQuery: query };
+  if (!q) return { filters: {}, remainder: '' };
 
-  if (/\bfemale\b|\bwomen\b|\bwoman\b|\bgirls?\b/.test(q)) result.filterGender = 'female';
-  else if (/\bmale\b|\bmen\b|\bman\b|\bguys?\b/.test(q)) result.filterGender = 'male';
+  const filters: Partial<FilterState> = { nlQuery: query };
+  // Mutable working copy — consumed tokens are replaced with spaces
+  let w = q;
 
-  const underMatch = q.match(/under\s+(\d+)/);
-  if (underMatch) result.filterAgeMax = parseInt(underMatch[1]) - 1;
-
-  const overMatch = q.match(/over\s+(\d+)|older than\s+(\d+)/);
-  if (overMatch) result.filterAgeMin = parseInt(overMatch[1] ?? overMatch[2]) + 1;
-
-  const atLeast = q.match(/at least\s+(\d+)/);
-  if (atLeast) result.filterAgeMin = parseInt(atLeast[1]);
-
-  const atMost = q.match(/at most\s+(\d+)/);
-  if (atMost) result.filterAgeMax = parseInt(atMost[1]);
-
-  const between = q.match(/between\s+(\d+)\s+and\s+(\d+)/);
-  if (between) {
-    result.filterAgeMin = parseInt(between[1]);
-    result.filterAgeMax = parseInt(between[2]);
+  // Gender
+  const femaleM = w.match(/\b(female|women|woman|girls?)\b/);
+  if (femaleM) { filters.filterGender = 'female'; w = w.replace(femaleM[0], ' '); }
+  else {
+    const maleM = w.match(/\b(male|men|man|guys?)\b/);
+    if (maleM) { filters.filterGender = 'male'; w = w.replace(maleM[0], ' '); }
   }
 
-  for (const [keyword, nat] of Object.entries(COUNTRY_NAT)) {
-    if (q.includes(keyword)) {
-      result.filterNats = [nat];
+  // Age — longest patterns first to avoid partial overlap
+  const betweenM = w.match(/between\s+(\d+)\s+and\s+(\d+)/);
+  if (betweenM) {
+    filters.filterAgeMin = parseInt(betweenM[1]);
+    filters.filterAgeMax = parseInt(betweenM[2]);
+    w = w.replace(betweenM[0], ' ');
+  }
+  const atLeastM = w.match(/at\s+least\s+(\d+)/);
+  if (atLeastM) { filters.filterAgeMin = parseInt(atLeastM[1]); w = w.replace(atLeastM[0], ' '); }
+  const atMostM = w.match(/at\s+most\s+(\d+)/);
+  if (atMostM) { filters.filterAgeMax = parseInt(atMostM[1]); w = w.replace(atMostM[0], ' '); }
+  const underM = w.match(/under\s+(\d+)/);
+  if (underM) { filters.filterAgeMax = parseInt(underM[1]) - 1; w = w.replace(underM[0], ' '); }
+  const overM = w.match(/(?:over|older\s+than)\s+(\d+)/);
+  if (overM) { filters.filterAgeMin = parseInt(overM[1]) + 1; w = w.replace(overM[0], ' '); }
+
+  // Nationality — try longer keywords first to avoid "iran" matching inside "iranian"
+  const sortedNat = Object.entries(COUNTRY_NAT).sort(([a], [b]) => b.length - a.length);
+  for (const [keyword, nat] of sortedNat) {
+    if (w.includes(keyword)) {
+      filters.filterNats = [nat];
+      w = w.replace(keyword, ' ');
       break;
     }
   }
 
-  if (/grouped?\s+by\s+age|by\s+age/.test(q)) result.groupBy = 'age';
-  else if (/grouped?\s+by\s+nat|by\s+nationality/.test(q)) result.groupBy = 'nationality';
-  else if (/grouped?\s+by\s+letter|by\s+name/.test(q)) result.groupBy = 'letter';
+  // Group by
+  const groupM = w.match(/grouped?\s+by\s+(age|nat(?:ionality)?|letter|name)/);
+  if (groupM) {
+    if (groupM[1] === 'age') filters.groupBy = 'age';
+    else if (groupM[1].startsWith('nat')) filters.groupBy = 'nationality';
+    else filters.groupBy = 'letter';
+    w = w.replace(groupM[0], ' ');
+  }
 
-  if (/oldest|most senior/.test(q)) result.sortBy = 'age-desc';
-  else if (/youngest|most junior/.test(q)) result.sortBy = 'age-asc';
+  // Sort
+  const sortM = w.match(/\b(oldest|most\s+senior|youngest|most\s+junior)\b/);
+  if (sortM) {
+    filters.sortBy = /oldest|senior/.test(sortM[0]) ? 'age-desc' : 'age-asc';
+    w = w.replace(sortM[0], ' ');
+  }
 
-  return result;
+  // Strip common stop words so they don't pollute keyword search
+  w = w.replace(/\b(users?|people|from|in|the|a|an|and|with|who|are)\b/g, ' ');
+
+  const remainder = w.split(/\s+/).filter(t => t.length > 0).join(' ');
+
+  return { filters, remainder };
 }
 
 @Injectable({ providedIn: 'root' })
