@@ -9,7 +9,7 @@ import { UserGroup, User } from '../../../../core/models/user.model';
 
 /** Flat virtual-scroll row — all rows are the same height (56px) */
 export type VirtualRow =
-  | { type: 'header'; label: string; count: number }
+  | { type: 'header'; label: string; count: number; collapsed: boolean }
   | { type: 'user'; user: User; natCount: number };
 
 @Component({
@@ -26,6 +26,9 @@ export class UserListComponent {
   /** Selected user for detail panel (lives outside virtual scroll) */
   readonly selectedUser = signal<User | null>(null);
 
+  /** Set of group labels that are currently collapsed */
+  readonly collapsedGroups = signal<Set<string>>(new Set());
+
   /** Pre-computed nat counts across all currently displayed users */
   readonly natCounts = computed<Map<string, number>>(() => {
     const map = new Map<string, number>();
@@ -40,15 +43,28 @@ export class UserListComponent {
   /** Flatten groups into a uniform virtual-scroll row array */
   readonly rows = computed<VirtualRow[]>(() => {
     const counts = this.natCounts();
+    const collapsed = this.collapsedGroups();
     const rows: VirtualRow[] = [];
     for (const g of this.groups()) {
-      rows.push({ type: 'header', label: g.label, count: g.users.length });
-      for (const user of g.users) {
-        rows.push({ type: 'user', user, natCount: counts.get(user.nat) ?? 0 });
+      const isCollapsed = collapsed.has(g.label);
+      rows.push({ type: 'header', label: g.label, count: g.users.length, collapsed: isCollapsed });
+      if (!isCollapsed) {
+        for (const user of g.users) {
+          rows.push({ type: 'user', user, natCount: counts.get(user.nat) ?? 0 });
+        }
       }
     }
     return rows;
   });
+
+  toggleGroup(label: string): void {
+    this.collapsedGroups.update(prev => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  }
 
   readonly selectedNatCount = computed(() => {
     const u = this.selectedUser();
