@@ -73,6 +73,32 @@
     &::placeholder { font-weight: normal; font-size: 11px; color: var(--text-muted); }
   }
 
+  &__reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    padding: 0 $spacing-s;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: $font-size-small;
+    font-weight: $font-weight-semi;
+    cursor: pointer;
+    margin-left: auto;
+    transition: background 0.1s, color 0.1s, border-color 0.1s;
+    white-space: nowrap;
+
+    svg { width: 11px; height: 11px; }
+
+    &:hover {
+      background: $color-red-o-50;
+      color: $color-red-900;
+      border-color: $color-red-700;
+    }
+  }
+
   &__clear {
     height: 28px;
     padding: 0 $spacing-m;

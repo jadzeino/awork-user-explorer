@@ -8,22 +8,30 @@
   <div class="list-header__col list-header__col--chevron"></div>
 </div>
 
-<!-- Letter jump bar — only in A–Z grouping mode -->
-@if (isLetterGroupBy()) {
+<!-- Toolbar bar: letter jump (A–Z mode only) + reset filters (always when active) -->
+@if (isLetterGroupBy() || hasActiveFilters() || collapsedGroups().size > 0) {
   <div class="letter-jump">
-    <span class="letter-jump__label">Jump to</span>
-    <input
-      class="letter-jump__input"
-      type="text"
-      maxlength="1"
-      placeholder="A–Z"
-      [value]="letterJumpValue()"
-      (input)="onLetterJumpInput($event); applyLetterJump()"
-      aria-label="Jump to letter group"
-    />
-    @if (letterJumpValue()) {
-      <button class="letter-jump__clear" (click)="clearLetterJump()" type="button" aria-label="Show all letter groups">All</button>
+    @if (isLetterGroupBy()) {
+      <span class="letter-jump__label">Jump to</span>
+      <input
+        class="letter-jump__input"
+        type="text"
+        maxlength="1"
+        placeholder="A–Z"
+        [value]="letterJumpValue()"
+        (input)="onLetterJumpInput($event); applyLetterJump()"
+        aria-label="Jump to letter group"
+      />
+      @if (letterJumpValue()) {
+        <button class="letter-jump__clear" (click)="clearLetterJump()" type="button" aria-label="Show all letter groups">All</button>
+      }
     }
+    <button class="letter-jump__reset" (click)="resetAll()" type="button" aria-label="Reset all filters">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+      Reset filters
+    </button>
   </div>
 }
 

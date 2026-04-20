@@ -71,6 +71,8 @@ export class UserListComponent {
     this.filterService.state().groupBy === 'letter'
   );
 
+  readonly hasActiveFilters = computed(() => this.filterService.hasActiveFilters());
+
   readonly availableLetters = computed<string[]>(() =>
     this.rows()
       .filter((r): r is Extract<VirtualRow, { type: 'header' }> => r.type === 'header')
@@ -104,6 +106,12 @@ export class UserListComponent {
   clearLetterJump(): void {
     this.letterJumpValue.set('');
     this.collapsedGroups.set(new Set());
+  }
+
+  resetAll(): void {
+    this.filterService.reset();
+    this.collapsedGroups.set(new Set());
+    this.letterJumpValue.set('');
   }
 
   @HostListener('keydown', ['$event'])
