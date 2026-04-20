@@ -1,0 +1,64 @@
+<div class="saved-filters">
+  <div class="saved-filters__header">
+    <span class="saved-filters__title">Saved Filters</span>
+
+    @if (!showNameInput()) {
+      <button
+        class="saved-filters__save-btn"
+        [class.saved-filters__save-btn--disabled]="!hasActiveFilters()"
+        [disabled]="!hasActiveFilters()"
+        (click)="startSave()"
+        type="button"
+        title="Save current filters"
+      >
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+          <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+        </svg>
+        Save
+      </button>
+    }
+  </div>
+
+  @if (showNameInput()) {
+    <div class="saved-filters__name-row">
+      <input
+        class="saved-filters__name-input"
+        type="text"
+        placeholder="Name this filter…"
+        [value]="nameInput()"
+        (input)="nameInput.set($any($event.target).value)"
+        (keydown)="onNameKeydown($event)"
+        autofocus
+        aria-label="Filter name"
+      />
+      <button class="saved-filters__confirm" (click)="confirmSave()" type="button" aria-label="Confirm">✓</button>
+      <button class="saved-filters__cancel" (click)="cancelSave()" type="button" aria-label="Cancel">✕</button>
+    </div>
+  }
+
+  <div class="saved-filters__list" role="list">
+    @for (entry of savedFiltersService.saved(); track entry.id) {
+      <div class="saved-filters__item" role="listitem">
+        <button
+          class="saved-filters__apply"
+          (click)="savedFiltersService.apply(entry.id)"
+          type="button"
+          [attr.title]="'Apply: ' + entry.name"
+        >{{ entry.name }}</button>
+        <button
+          class="saved-filters__delete"
+          (click)="savedFiltersService.remove(entry.id)"
+          type="button"
+          [attr.aria-label]="'Delete ' + entry.name"
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+    } @empty {
+      <p class="saved-filters__empty">No saved filters yet</p>
+    }
+  </div>
+</div>
