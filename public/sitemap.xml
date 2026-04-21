@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    NOTE: This is a client-side Angular SPA.
+    All routes below are rendered in the browser — crawlers will see the initial
+    HTML shell only. For full SEO benefit, migrate to Angular SSR (server-side
+    rendering) or Angular SSG (static site generation) so each URL delivers
+    pre-rendered content to search engines.
+    See README.md → SEO Considerations for the full migration plan.
+  -->
+  <url>
+    <loc>https://your-domain.com/</loc>
+    <lastmod>2026-04-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
