@@ -91,8 +91,8 @@
   &__nat-badge {
     font-size: $font-size-small;
     font-weight: $font-weight-semi;
-    color: $color-blue-900;
-    background: $color-blue-o-50;
+    color: var(--accent-male);
+    border: 1px solid var(--accent-male);
     padding: 2px 6px;
     border-radius: 4px;
   }
