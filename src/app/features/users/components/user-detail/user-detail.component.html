@@ -1,6 +1,6 @@
-<div class="detail" role="dialog" [attr.aria-label]="'Details for ' + user().firstname + ' ' + user().lastname" aria-modal="true">
+<div class="detail" role="dialog" aria-labelledby="detail-title" aria-modal="true">
   <div class="detail__header">
-    <h3 class="detail__title">User Details</h3>
+    <h3 id="detail-title" class="detail__title">{{ user().firstname }} {{ user().lastname }}</h3>
     <button
       class="detail__close"
       (click)="close.emit()"
