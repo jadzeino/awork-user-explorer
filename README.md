@@ -331,33 +331,40 @@ Configuration is in [`vercel.json`](vercel.json):
 
 > **Current state:** This submission is a pure client-side SPA. Crawlers receive the Angular HTML shell — dynamic content is invisible to them without JavaScript execution.
 
-The project includes `public/robots.txt` and `public/sitemap.xml` pointing to the live Vercel URL. To make this application truly SEO-friendly, the following would need to be addressed in production:
+The project includes `public/robots.txt` and `public/sitemap.xml` pointing to the live Vercel URL as a baseline.
 
-### What needs to change for real SEO
+### Why SSR is not applicable here
+
+Angular SSR is often the default recommendation for SEO, but it would provide no real benefit for this application — and adding it would be the wrong engineering call for two reasons:
+
+1. **The data source returns randomised content.** The Random User API generates different users on every request. There are no stable, permanent URLs representing real people. A search engine indexing `/` today would find completely different content tomorrow — SSR cannot make that crawlable in any meaningful way.
+
+2. **This is an internal exploration tool, not a public-facing page.** A user directory built for a team to browse and filter is not something you want indexed by Google. The value is in the interactive experience, which requires JavaScript regardless of rendering strategy.
+
+The `robots.txt`, `sitemap.xml`, Open Graph tags, and `<meta name="description">` are committed as good hygiene and as a signal that SEO was considered. The architecture is ready for SSR to be layered on if the data source ever changes to stable, crawlable content.
+
+### If the data source were stable — what SSR would add
 
 **1. Server-Side Rendering (Angular SSR)**
 ```bash
 ng add @angular/ssr
 ```
-- Renders each route to static HTML on the server so crawlers (and users on slow connections) receive content immediately
+- Delivers pre-rendered HTML to crawlers and users on slow connections
 - Angular 20 ships a fully supported SSR builder — migration is additive
 
 **2. Meta tags per route**
-Use `Meta` and `Title` services from `@angular/platform-browser` to set `<title>`, `<meta name="description">`, and Open Graph tags on each navigation event.
+Use `Meta` and `Title` services from `@angular/platform-browser` to set `<title>`, `<meta name="description">`, and Open Graph tags dynamically on each navigation event.
 
 **3. Dynamic sitemap generation**
-For a user-directory app with dynamic content, the sitemap should be generated server-side (or at build time via SSG) to reflect actual URLs.
+Generate the sitemap server-side (or at build time via SSG) to reflect real, stable URLs.
 
 **4. Structured data (JSON-LD)**
-Adding `application/ld+json` blocks for the `Person` schema would allow rich results in search engines for individual user profiles.
+Add `application/ld+json` blocks for the `Person` schema to enable rich search results for individual user profiles.
 
-**5. Core Web Vitals**
-- LCP: SSR delivers content in the first byte; no skeleton needed for the initial paint
-- CLS: Images carry explicit `width` / `height` attributes (already done); SSR eliminates layout shift from deferred JS hydration
-- INP: Virtual scroll and Web Worker already keep the main thread responsive
-
-**Why it was deferred for this challenge:**
-The challenge spec focuses on Angular proficiency, not deployment infrastructure. Adding SSR would double the scope and obscure the core decisions. The `robots.txt` and `sitemap.xml` stubs are committed as a signal that SEO was considered, and the architecture is ready for SSR to be layered on.
+**5. Core Web Vitals impact**
+- **LCP** — SSR delivers content in the first byte; no skeleton wait
+- **CLS** — eliminates layout shift from deferred JS hydration
+- **INP** — virtual scroll and Web Worker already keep the main thread responsive; no change needed
 
 ---
 
