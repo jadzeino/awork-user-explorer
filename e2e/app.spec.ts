@@ -149,4 +149,163 @@ test.describe('awork challenge app', () => {
     await page.getByRole('button', { name: /compare/i }).click();
     await expect(page.locator('app-compare-mode')).not.toBeVisible();
   });
+
+  test('agent mode replaces the filter UI and the normal label restores it', async ({ page }) => {
+    // Normal mode: filter toggle and search bar visible
+    await expect(page.getByRole('button', { name: /toggle filters/i })).toBeVisible();
+    await expect(page.locator('app-command-bar')).toBeVisible();
+
+    // Switch to agent mode
+    await page.getByRole('button', { name: /agent/i }).click();
+    await expect(page.locator('app-agent-mode')).toBeVisible();
+    // Filter toggle and standard search bar are hidden in agent mode
+    await expect(page.getByRole('button', { name: /toggle filters/i })).not.toBeVisible();
+    await expect(page.locator('app-command-bar')).not.toBeVisible();
+
+    // The NL input is present
+    await expect(page.getByLabel('Natural language filter query')).toBeVisible();
+
+    // Switch back to normal
+    await page.getByRole('button', { name: /normal/i }).click();
+    await expect(page.locator('app-agent-mode')).not.toBeVisible();
+    await expect(page.locator('app-command-bar')).toBeVisible();
+  });
+
+  test('group by Age regroups the list and switching back to A–Z restores letter headers', async ({ page }) => {
+    await page.locator('cdk-virtual-scroll-viewport').waitFor({ timeout: 10_000 });
+
+    // Open filter drawer
+    await page.getByRole('button', { name: /toggle filters/i }).click();
+
+    // Switch to Age grouping
+    await page.getByRole('group', { name: /group users by/i }).getByRole('button', { name: 'Age' }).click();
+
+    // Age group headers appear (e.g. "20s", "30s", "40s", "50s")
+    await expect(page.locator('.group-header').first()).toBeVisible({ timeout: 5_000 });
+
+    // Switch back to A–Z
+    await page.getByRole('group', { name: /group users by/i }).getByRole('button', { name: 'A–Z' }).click();
+
+    // Letter group headers appear again
+    await expect(page.locator('.group-header').first()).toBeVisible({ timeout: 5_000 });
+  });
+
+  test('sort by Name orders the list and Default restores original order', async ({ page }) => {
+    await page.locator('cdk-virtual-scroll-viewport app-user-item').first().waitFor({ timeout: 10_000 });
+
+    // Open filter drawer
+    await page.getByRole('button', { name: /toggle filters/i }).click();
+
+    // Apply Name sort
+    await page.getByRole('group', { name: /sort users by/i }).getByRole('button', { name: 'Name' }).click();
+
+    // List footer still shows all users (sort doesn't filter)
+    await expect(page.locator('.list-footer')).not.toContainText('Showing 0');
+
+    // Reset to Default
+    await page.getByRole('group', { name: /sort users by/i }).getByRole('button', { name: 'Default' }).click();
+    await expect(page.locator('.list-footer')).not.toContainText('Showing 0');
+  });
+
+  test('letter jump scrolls to that group and All clears it', async ({ page }) => {
+    await page.locator('cdk-virtual-scroll-viewport').waitFor({ timeout: 10_000 });
+
+    // Letter jump input is visible (A–Z grouping is default)
+    const jumpInput = page.getByLabel('Jump to letter group');
+    await expect(jumpInput).toBeVisible();
+
+    // Type a letter that exists in our fixture (A for Alice)
+    await jumpInput.fill('A');
+
+    // "All" clear button appears
+    await expect(page.getByLabel('Show all letter groups')).toBeVisible();
+
+    // Clear it — the All button disappears
+    await page.getByLabel('Show all letter groups').click();
+    await expect(page.getByLabel('Show all letter groups')).not.toBeVisible();
+  });
+
+  test('"Restore Default" button appears after filtering and resets to full count', async ({ page }) => {
+    await page.locator('cdk-virtual-scroll-viewport app-user-item').first().waitFor({ timeout: 10_000 });
+
+    // "Restore Default" is not visible initially (no active filters)
+    await expect(page.getByLabel('Restore default view')).not.toBeVisible();
+
+    // Apply a gender filter
+    await page.getByRole('button', { name: /toggle filters/i }).click();
+    await page.getByRole('group', { name: /filter by gender/i }).getByRole('button', { name: 'Male', exact: true }).click();
+
+    // Wait for filter to apply
+    const footer = page.locator('.list-footer');
+    const fullText = await footer.textContent();
+    await expect(footer).not.toHaveText(fullText!, { timeout: 5_000 });
+
+    // Close the drawer via the backdrop so it doesn't block the main area
+    await page.locator('.users-page__backdrop').click();
+    await expect(page.locator('.users-page__backdrop')).not.toBeVisible();
+
+    // Restore Default button now visible — click it
+    await expect(page.getByLabel('Restore default view')).toBeVisible();
+    await page.getByLabel('Restore default view').click();
+
+    // Count returns to full
+    await expect(footer).toHaveText(fullText!, { timeout: 5_000 });
+    await expect(page.getByLabel('Restore default view')).not.toBeVisible();
+  });
+
+  test('nationality filter narrows results and stacks with gender filter', async ({ page }) => {
+    await page.locator('cdk-virtual-scroll-viewport app-user-item').first().waitFor({ timeout: 10_000 });
+
+    // Open filter drawer
+    await page.getByRole('button', { name: /toggle filters/i }).click();
+
+    const footer = page.locator('.list-footer');
+    const fullText = await footer.textContent();
+
+    // Filter to DE (Germany) — fixture has 3 DE users
+    await page.getByRole('group', { name: /filter by nationality/i }).getByRole('button', { name: 'DE' }).click();
+    await expect(footer).not.toHaveText(fullText!, { timeout: 5_000 });
+
+    // Stack gender = female on top — narrows further
+    await page.getByRole('group', { name: /filter by gender/i }).getByRole('button', { name: /female/i }).click();
+    const afterGender = await footer.textContent();
+    const afterNat = await footer.textContent();
+    // Female + DE must be ≤ DE-only count
+    expect(afterGender).not.toBe(fullText);
+    expect(afterNat).not.toContain('Showing 0');
+  });
+
+  test('save a filter preset and apply it to restore the same state', async ({ page }) => {
+    await page.locator('cdk-virtual-scroll-viewport app-user-item').first().waitFor({ timeout: 10_000 });
+
+    // Open filter drawer and apply a gender filter to create a non-default state
+    await page.getByRole('button', { name: /toggle filters/i }).click();
+    await page.getByRole('group', { name: /filter by gender/i }).getByRole('button', { name: /female/i }).click();
+
+    const footer = page.locator('.list-footer');
+    await expect(footer).not.toContainText('Showing 8', { timeout: 5_000 });
+    const filteredText = await footer.textContent();
+
+    // Save this filter configuration
+    await page.locator('.saved-filters__save-btn').click();
+    await expect(page.getByLabel('Filter name')).toBeVisible();
+    await page.getByLabel('Filter name').fill('Female only');
+    await page.getByLabel('Confirm').click();
+
+    // Saved filter appears in the list (use title attribute to pick the apply button precisely)
+    const applyBtn = page.locator('button[title="Apply: Female only"]');
+    await expect(applyBtn).toBeVisible();
+
+    // Reset all filters (click All gender chip)
+    await page.getByRole('group', { name: /filter by gender/i }).getByRole('button', { name: 'All' }).click();
+    await expect(footer).toHaveText('Showing 8 users', { timeout: 5_000 });
+
+    // Apply the saved filter
+    await applyBtn.click();
+    await expect(footer).toHaveText(filteredText!, { timeout: 5_000 });
+
+    // Clean up — delete the saved filter
+    await page.getByRole('button', { name: 'Delete Female only' }).click();
+    await expect(applyBtn).not.toBeVisible();
+  });
 });
