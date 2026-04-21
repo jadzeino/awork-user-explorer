@@ -2,7 +2,8 @@
 
 > A production-grade Angular 20 single-page application that fetches, groups, filters, and explores 5,000 users from the [Random User API](https://randomuser.me/documentation). Built as a coding challenge, it demonstrates senior-level decisions around performance, accessibility, testing, and developer experience.
 
-🚀 **[Live Demo → awork-user-explorer.vercel.app](https://awork-user-explorer.vercel.app)**
+🚀 **[Live Demo → awork-user-explorer.vercel.app](https://awork-user-explorer.vercel.app)**  
+📄 **[Solution & Decision Log →](SOLUTION.md)** — how I approached the problem, architectural decisions, and trade-offs made
 
 ---
 
