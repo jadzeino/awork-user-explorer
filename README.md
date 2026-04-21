@@ -2,6 +2,14 @@
 
 > A production-grade Angular 20 single-page application that fetches, groups, filters, and explores 5,000 users from the [Random User API](https://randomuser.me/documentation). Built as a coding challenge, it demonstrates senior-level decisions around performance, accessibility, testing, and developer experience.
 
+🚀 **[Live Demo → awork-user-explorer.vercel.app](https://awork-user-explorer.vercel.app)**
+
+---
+
+## Lighthouse Scores
+
+![Lighthouse scores](public/images/awork-lighthouse-scores.png)
+
 ---
 
 ## Table of Contents
@@ -14,6 +22,7 @@
 - [Performance Profile](#performance-profile)
 - [Testing](#testing)
 - [Accessibility](#accessibility)
+- [CI/CD & Deployment](#cicd--deployment)
 - [SEO Considerations](#seo-considerations)
 - [AI-Assisted Development](#ai-assisted-development)
 - [Possible Next Features](#possible-next-features)
@@ -23,6 +32,9 @@
 ## Live Features
 
 ### Search & Filtering
+
+![Quick search bar with field chips](public/images/quick-search-bar.png)
+
 | Feature | Detail |
 |---|---|
 | **Smart search bar** | Debounced 250 ms keyword search across any combination of name, email, username, phone, city, or country — toggled via field chips |
@@ -33,40 +45,67 @@
 | **Location filter** | Cascading country → state → city dropdowns; populated from the live dataset |
 | **Saved filters** | Name and persist any combination of filters to `localStorage`; restore or delete at any time |
 
-### Grouping & Sorting
+![Side filter panel with grouping and saved filters](public/images/side-filter-panel.png)
+
+### Grouping, Sorting & Pagination
+
+![Pagination controls and jump-to-letter bar](public/images/pagination-jump-to.png)
+
 | Feature | Detail |
 |---|---|
 | **Group by** | Switch between A–Z letter / age bracket / nationality groupings live |
 | **Sort** | Default order, name A–Z, age ascending, age descending |
 | **Jump-to-letter** | Single-character input scrolls the virtual list directly to the matching group |
 | **Collapsible groups** | Click/Enter/Space on any group header to collapse or expand it |
+| **Pagination / infinite scroll** | Toggle between page-based (5,000 users per page) and continuous infinite-scroll modes |
 
 ### Analytics Panel
+
+![Analytics section — collapsible with interactive charts](public/images/analytics-section.png)
+
 | Feature | Detail |
 |---|---|
 | **Gender donut chart** | SVG arc chart; click legend buttons to filter by segment |
 | **Age histogram** | Bar chart of age buckets; click a bar to apply that age bracket as a filter |
 | **Top nationalities** | Ranked bar list; click any country to toggle it in the nationality filter |
+| **Collapsible** | The entire analytics section can be expanded or collapsed to reclaim vertical space |
+
+### Compare Mode
+
+![Compare mode — side-by-side gender and nationality analytics](public/images/compare-section.png)
+
+| Feature | Detail |
+|---|---|
 | **Compare mode** | Side-by-side analytics comparing two gender or nationality segments |
 
+### AI Agent Mode
+
+![AI Agent Mode — natural language to filter query](public/images/ai-agent-section.png)
+
+| Feature | Detail |
+|---|---|
+| **Agent mode** | Natural-language → filter via Groq LLM API (llama-3.1-8b-instant); gracefully disabled without a key |
+
+> **Groq API key required.** Get a free key (no credit card) at [console.groq.com/keys](https://console.groq.com/keys) and add it to `src/environments/environment.ts`.
+
 ### User Experience
+
 | Feature | Detail |
 |---|---|
 | **User detail panel** | Click any row to slide open a rich detail view with avatar, contact info, address, and nationality peer count |
-| **Agent mode** | Natural-language → filter via Groq LLM API (llama-3.1-8b-instant); gracefully disabled without a key |
 | **Dark / light mode** | Reads `prefers-color-scheme` on load; toggle persisted to `localStorage` |
 | **Skeleton loaders** | Shimmer placeholders during initial fetch — no layout shift |
 | **Error banner** | HTTP failures surface a descriptive banner; app stays interactive |
-| **Pagination / infinite scroll** | Switch between page-based and continuous scroll modes |
 | **Restore Default** | One-click reset of all filters, grouping, sort, and compare state |
+| **404 page** | Unknown routes show a clean not-found page with a home link |
 
 ---
 
 ## Quick Start
 
 ```bash
-git clone <repo-url>
-cd awork-challenge-develop
+git clone https://github.com/jadzeino/awork-user-explorer.git
+cd awork-user-explorer
 npm install
 npm start          # http://localhost:4200
 ```
@@ -75,10 +114,8 @@ npm start          # http://localhost:4200
 
 Agent Mode uses the [Groq API](https://console.groq.com) (free tier, no credit card required) to translate natural-language queries into structured filters.
 
-```bash
-cp src/environments/environment.example.ts src/environments/environment.ts
-# open environment.ts and set groqApiKey to your key from console.groq.com/keys
-```
+1. Get a free key at [console.groq.com/keys](https://console.groq.com/keys)
+2. Open `src/environments/environment.ts` and replace `'your-groq-api-key-here'` with your key
 
 Without a key the app is fully functional — Agent Mode shows a configuration notice.
 
@@ -132,13 +169,13 @@ src/
 │   │           └── users-page/          # Orchestration: wires services → components
 │   └── shared/
 │       └── components/
-│           └── skeleton/                # Reusable shimmer placeholder row
+│           ├── skeleton/                # Reusable shimmer placeholder row
+│           └── not-found/              # 404 page with home link
 ├── workers/
 │   ├── grouping.logic.ts    # Pure filter + group + sort functions (fully testable)
 │   └── grouping.worker.ts   # Web Worker wrapper, echoes __id for request matching
 └── environments/
-    ├── environment.example.ts
-    └── environment.ts        # gitignored — copy from example
+    └── environment.ts        # gitignored — add your Groq API key here
 e2e/
 ├── fixtures/
 │   └── users.json           # 8-user deterministic fixture for Playwright tests
@@ -201,7 +238,7 @@ npm run test:ci     # single run
 npm test            # watch mode
 ```
 
-**5 test suites · ~50 assertions · zero Jasmine dependencies**
+**5 test suites · ~65 assertions · zero Jasmine dependencies**
 
 | Suite | What it covers |
 |---|---|
@@ -209,7 +246,7 @@ npm test            # watch mode
 | `filter.service.spec.ts` | `parseNaturalLanguage` — gender, age patterns, nationality detection, sort/group directives, combined queries |
 | `user.schema.spec.ts` | Valid API mapping, Zod graceful fallback on malformed data, UUID image URL generation |
 | `users.service.spec.ts` | HTTP mapping, `shareReplay` deduplication, page caching |
-| `app.component.spec.ts` | App bootstraps and title renders |
+| `app.component.spec.ts` | App bootstraps and header renders |
 
 **Tooling choices:**
 - `jest-preset-angular` v16 — Angular 20 compatibility
@@ -258,10 +295,35 @@ This application targets **WCAG 2.1 Level AA**.
 | Group headers | `aria-expanded` state exposed; label includes expand/collapse hint |
 | Filter buttons | `aria-pressed` on all toggle buttons (gender, nationality, age bar, compare) |
 | SVG charts | Outer `<svg>` elements carry `aria-hidden="true"`; all user-facing controls are real `<button>` elements in the legend |
-| Focus management | Detail panel moves focus to the close button on open; Escape closes and returns focus |
+| Focus management | Filter drawer moves focus to the first focusable element on open; Escape closes and returns focus to the trigger |
 | Motion sensitivity | All `@keyframes` and `animation` declarations are wrapped in `@media (prefers-reduced-motion: no-preference)` |
-| Colour contrast | Semantic CSS custom properties tested in both light and dark themes |
+| Colour contrast | All text meets 4.5:1 AA ratio in both light and dark themes; verified programmatically |
 | Form inputs | All inputs have visible labels or `aria-label`; placeholders are supplementary |
+
+---
+
+## CI/CD & Deployment
+
+### GitHub Actions — CI
+
+Every push to `main` and every pull request runs the full quality gate automatically:
+
+```
+lint → test:ci → build:prod
+```
+
+The workflow is defined in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+### Vercel — Deployment
+
+The app is deployed to [Vercel](https://vercel.com) with automatic deployments on every push to `main`. Pull requests receive isolated preview URLs.
+
+Configuration is in [`vercel.json`](vercel.json):
+- **Build command:** `npm run build:prod`
+- **Output directory:** `dist/awork-challenge/browser`
+- **SPA routing:** all paths rewrite to `index.html` so Angular Router handles navigation
+
+🚀 **Production:** [awork-user-explorer.vercel.app](https://awork-user-explorer.vercel.app)
 
 ---
 
@@ -269,7 +331,7 @@ This application targets **WCAG 2.1 Level AA**.
 
 > **Current state:** This submission is a pure client-side SPA. Crawlers receive the Angular HTML shell — dynamic content is invisible to them without JavaScript execution.
 
-The project includes `public/robots.txt` and `public/sitemap.xml` as a baseline. To make this application truly SEO-friendly, the following would need to be addressed in production:
+The project includes `public/robots.txt` and `public/sitemap.xml` pointing to the live Vercel URL. To make this application truly SEO-friendly, the following would need to be addressed in production:
 
 ### What needs to change for real SEO
 
@@ -320,7 +382,6 @@ This project was developed with the assistance of **Claude (Anthropic)** via the
 - Every generated snippet was reviewed, understood, and often modified before commit
 - Claude surfaced options and trade-offs; the developer made the final architectural decisions
 - No code was blindly accepted — the AI acted as a senior pair-programmer, not an autopilot
-- All commits are co-authored to reflect the collaborative nature of the work
 
 ### Why disclose this?
 
@@ -333,9 +394,9 @@ Transparent AI use is a professional signal, not a liability. Modern software te
 These are well-scoped improvements that would make strong follow-on PRs:
 
 ### Performance & Scale
-- **Pagination for large datasets** — fetch users in background pages, merge progressively into the cache
 - **IndexedDB persistence** — store the 5k users locally so repeat visits load instantly with a stale-while-revalidate pattern
 - **Service Worker / PWA** — offline support; installable on mobile
+- **Background pagination** — fetch additional pages silently and merge into the cache
 
 ### Search & Discovery
 - **Fuzzy search** — integrate a library like Fuse.js for typo-tolerant matching
@@ -356,7 +417,6 @@ These are well-scoped improvements that would make strong follow-on PRs:
 ### Infrastructure
 - **Angular SSR** — enable server-side rendering for SEO and first-paint performance (see [SEO Considerations](#seo-considerations))
 - **i18n** — Angular's built-in `$localize` for multi-language support
-- **CI/CD pipeline** — GitHub Actions workflow: `lint → test:ci → test:e2e → build:prod`
 - **Docker** — `Dockerfile` + `nginx.conf` for containerised deployment
 
 ---
@@ -377,3 +437,5 @@ These are well-scoped improvements that would make strong follow-on PRs:
 | Linting | ESLint 9 + @angular-eslint |
 | Formatting | Prettier 3.5 |
 | LLM integration | Groq API (llama-3.1-8b-instant) |
+| CI | GitHub Actions |
+| Hosting | Vercel |
