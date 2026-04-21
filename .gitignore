@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 # API keys — never commit real keys
-/src/environments/environment.ts
+# environment.ts committed with placeholder â never commit your real key
