@@ -13,7 +13,7 @@
       type="text"
       placeholder='e.g. "female users from Germany under 30"'
       [value]="query()"
-      (input)="query.set($any($event.target).value)"
+      (input)="onInput($event)"
       (keydown)="onKeydown($event)"
       [disabled]="loading()"
       aria-label="Natural language filter query"

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { User } from '../../../../core/models/user.model';
 import { FilterService } from '../../../../core/services/filter.service';
 

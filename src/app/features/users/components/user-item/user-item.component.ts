@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, input, output, computed
+  Component, ChangeDetectionStrategy, input, output
 } from '@angular/core';
 import { User } from '../../../../core/models/user.model';
 

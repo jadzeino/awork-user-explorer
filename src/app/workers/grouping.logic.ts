@@ -121,6 +121,7 @@ export function runGrouping(req: GroupingRequest): GroupingResult {
     case 'letter': groups = groupByLetter(sorted); break;
     case 'age': groups = groupByAge(sorted); break;
     case 'nationality': groups = groupByNationality(sorted); break;
+    default: groups = groupByLetter(sorted);
   }
 
   return { groups, totalCount: filtered.length };

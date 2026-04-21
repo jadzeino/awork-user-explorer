@@ -47,8 +47,8 @@ describe('runGrouping', () => {
       const keys = result.groups.map(g => g.key);
       expect(keys).toContain('A');
       expect(keys).toContain('B');
-      const aGroup = result.groups.find(g => g.key === 'A')!;
-      expect(aGroup.users.length).toBe(2);
+      const aGroup = result.groups.find(g => g.key === 'A');
+      expect(aGroup?.users.length).toBe(2);
     });
 
     it('sorts groups alphabetically', () => {
@@ -91,10 +91,10 @@ describe('runGrouping', () => {
         makeUser({ id: '3', nat: 'US' }),
       ];
       const result = runGrouping({ ...BASE_REQ, groupBy: 'nationality', users });
-      const de = result.groups.find(g => g.key === 'DE')!;
-      const us = result.groups.find(g => g.key === 'US')!;
-      expect(de.users.length).toBe(1);
-      expect(us.users.length).toBe(2);
+      const de = result.groups.find(g => g.key === 'DE');
+      const us = result.groups.find(g => g.key === 'US');
+      expect(de?.users.length).toBe(1);
+      expect(us?.users.length).toBe(2);
     });
   });
 

@@ -17,7 +17,8 @@ export class UsersService {
   private readonly cache = new Map<number, Observable<User[]>>();
 
   getUsers(page = 1): Observable<User[]> {
-    if (this.cache.has(page)) return this.cache.get(page)!;
+    const cached = this.cache.get(page);
+    if (cached) return cached;
 
     // Serve from sessionStorage to avoid re-hitting the API on hot-reload / refresh
     const stored = this.readSession(page);

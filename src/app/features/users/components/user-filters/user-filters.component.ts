@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, inject, OnInit, OnDestroy, signal
+  Component, ChangeDetectionStrategy, inject, OnInit, OnDestroy
 } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';

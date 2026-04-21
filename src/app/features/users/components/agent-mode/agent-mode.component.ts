@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FilterService } from '../../../../core/services/filter.service';
 import { environment } from '../../../../../environments/environment';
@@ -40,6 +41,7 @@ type GroqResponse = { choices: { message: { content: string } }[] };
 export class AgentModeComponent {
   private readonly http = inject(HttpClient);
   private readonly filterService = inject(FilterService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly query = signal('');
   readonly loading = signal(false);
@@ -77,6 +79,7 @@ export class AgentModeComponent {
     };
 
     this.http.post<GroqResponse>('https://api.groq.com/openai/v1/chat/completions', body, { headers })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.loading.set(false);
@@ -134,8 +137,8 @@ export class AgentModeComponent {
       summaryParts.push(f.city[0]);
     }
     if (f.age) {
-      if (f.age.min != null) { patch.filterAgeMin = f.age.min; summaryParts.push(`Age ≥ ${f.age.min}`); }
-      if (f.age.max != null) { patch.filterAgeMax = f.age.max; summaryParts.push(`Age ≤ ${f.age.max}`); }
+      if (f.age.min !== null && f.age.min !== undefined) { patch.filterAgeMin = f.age.min; summaryParts.push(`Age ≥ ${f.age.min}`); }
+      if (f.age.max !== null && f.age.max !== undefined) { patch.filterAgeMax = f.age.max; summaryParts.push(`Age ≤ ${f.age.max}`); }
     }
 
     this.filterService.update(patch);
@@ -147,6 +150,10 @@ export class AgentModeComponent {
     this.summary.set(null);
     this.error.set(null);
     this.filterService.resetFilters();
+  }
+
+  onInput(event: Event): void {
+    this.query.set((event.target as HTMLInputElement).value);
   }
 
   onKeydown(event: KeyboardEvent): void {

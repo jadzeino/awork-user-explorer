@@ -34,7 +34,7 @@ export class SavedFiltersService {
   save(name: string): void {
     const s = this.filterService.state();
     const entry: SavedFilter = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: crypto.randomUUID(),
       name: name.trim() || 'Filter',
       state: {
         searchQuery: s.searchQuery,

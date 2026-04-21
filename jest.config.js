@@ -16,6 +16,6 @@ module.exports = {
     'grouping\\.service$': '<rootDir>/src/__mocks__/grouping.service.mock.ts',
   },
   moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
-  testMatch: ['**/*.spec.ts'],
+  testMatch: ['<rootDir>/src/**/*.spec.ts'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/main.ts'],
 };
