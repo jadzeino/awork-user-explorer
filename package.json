@@ -11,7 +11,8 @@
     "test:ci": "jest --ci",
     "lint": "eslint src --max-warnings=0",
     "format": "prettier --write src",
-    "format:check": "prettier --check src"
+    "format:check": "prettier --check src",
+    "test:e2e": "playwright test"
   },
   "private": true,
   "dependencies": {
@@ -36,6 +37,7 @@
     "@angular-eslint/template-parser": "19.0.2",
     "@angular/cli": "20.3.10",
     "@angular/compiler-cli": "20.3.11",
+    "@playwright/test": "^1.59.1",
     "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "8.34.0",
     "@typescript-eslint/parser": "8.34.0",

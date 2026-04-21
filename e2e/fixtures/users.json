@@ -1,0 +1,112 @@
+{
+  "results": [
+    {
+      "gender": "female",
+      "name": { "title": "Ms", "first": "Alice", "last": "Smith" },
+      "location": {
+        "street": { "number": 1, "name": "Main St" },
+        "city": "Berlin",
+        "state": "Berlin",
+        "country": "Germany",
+        "postcode": "10115",
+        "coordinates": { "latitude": "52.52", "longitude": "13.40" },
+        "timezone": { "offset": "+1:00", "description": "CET" }
+      },
+      "email": "alice.smith@example.com",
+      "login": {
+        "uuid": "aaaa-1111",
+        "username": "alice1",
+        "password": "pass",
+        "salt": "salt",
+        "md5": "md5",
+        "sha1": "sha1",
+        "sha256": "sha256"
+      },
+      "dob": { "date": "1990-04-01T00:00:00.000Z", "age": 34 },
+      "registered": { "date": "2010-01-01T00:00:00.000Z", "age": 14 },
+      "phone": "+49 30 12345678",
+      "cell": "+49 170 1234567",
+      "id": { "name": "SVNR", "value": "12345" },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/women/1.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/women/1.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/women/1.jpg"
+      },
+      "nat": "DE"
+    },
+    {
+      "gender": "male",
+      "name": { "title": "Mr", "first": "Bob", "last": "Jones" },
+      "location": {
+        "street": { "number": 2, "name": "Oak Ave" },
+        "city": "London",
+        "state": "England",
+        "country": "United Kingdom",
+        "postcode": "EC1A 1BB",
+        "coordinates": { "latitude": "51.51", "longitude": "-0.12" },
+        "timezone": { "offset": "+0:00", "description": "GMT" }
+      },
+      "email": "bob.jones@example.com",
+      "login": {
+        "uuid": "bbbb-2222",
+        "username": "bob2",
+        "password": "pass",
+        "salt": "salt",
+        "md5": "md5",
+        "sha1": "sha1",
+        "sha256": "sha256"
+      },
+      "dob": { "date": "1985-07-15T00:00:00.000Z", "age": 39 },
+      "registered": { "date": "2012-03-01T00:00:00.000Z", "age": 12 },
+      "phone": "+44 20 12345678",
+      "cell": "+44 7700 123456",
+      "id": { "name": "NINO", "value": "AB123456C" },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/men/1.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/men/1.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/men/1.jpg"
+      },
+      "nat": "GB"
+    },
+    {
+      "gender": "female",
+      "name": { "title": "Mrs", "first": "Carol", "last": "Brown" },
+      "location": {
+        "street": { "number": 3, "name": "Pine Rd" },
+        "city": "Paris",
+        "state": "Île-de-France",
+        "country": "France",
+        "postcode": "75001",
+        "coordinates": { "latitude": "48.86", "longitude": "2.35" },
+        "timezone": { "offset": "+1:00", "description": "CET" }
+      },
+      "email": "carol.brown@example.com",
+      "login": {
+        "uuid": "cccc-3333",
+        "username": "carol3",
+        "password": "pass",
+        "salt": "salt",
+        "md5": "md5",
+        "sha1": "sha1",
+        "sha256": "sha256"
+      },
+      "dob": { "date": "1992-11-20T00:00:00.000Z", "age": 31 },
+      "registered": { "date": "2015-06-01T00:00:00.000Z", "age": 9 },
+      "phone": "+33 1 12345678",
+      "cell": "+33 6 12345678",
+      "id": { "name": "INSEE", "value": "2921175012345" },
+      "picture": {
+        "large": "https://randomuser.me/api/portraits/women/2.jpg",
+        "medium": "https://randomuser.me/api/portraits/med/women/2.jpg",
+        "thumbnail": "https://randomuser.me/api/portraits/thumb/women/2.jpg"
+      },
+      "nat": "FR"
+    }
+  ],
+  "info": {
+    "seed": "awork",
+    "results": 3,
+    "page": 1,
+    "version": "1.4"
+  }
+}
