@@ -137,24 +137,6 @@ html, body {
   outline: none;
 }
 
-/* Skip-nav link — visually hidden until focused */
-.skip-nav {
-  position: absolute;
-  top: -100%;
-  left: 16px;
-  z-index: 9999;
-  padding: 6px 14px;
-  background: var(--accent-primary);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 0 0 6px 6px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: top 0.1s;
-
-  &:focus { top: 0; outline: none; }
-}
 
 /* =========================================================
    MICRO-ANIMATIONS  (respects prefers-reduced-motion)

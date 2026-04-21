@@ -2,7 +2,7 @@
   class="user-item"
   [class.user-item--selected]="isSelected()"
   (click)="toggle()"
-  (keydown.enter)="toggle()"
+  (keydown.enter)="toggle(); $event.preventDefault()"
   (keydown.space)="toggle(); $event.preventDefault()"
   role="button"
   tabindex="0"

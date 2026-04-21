@@ -8,10 +8,12 @@
   <!-- ── Left drawer — Filters ── -->
   @if (!filterService.state().agentMode) {
     <aside
+      #filterDrawer
       class="users-page__left"
       [class.users-page__left--open]="leftOpen()"
       [attr.inert]="leftOpen() ? null : true"
       aria-label="Filters"
+      (keydown.escape)="closeDrawer()"
     >
       <app-faceted-filters />
       <app-location-filter [users]="allUsers()" />
@@ -61,10 +63,12 @@
     <div class="users-page__search">
       @if (!filterService.state().agentMode) {
         <button
+          #filterToggleBtn
           class="users-page__filter-toggle"
           [class.users-page__filter-toggle--active]="leftOpen()"
-          (click)="leftOpen.set(!leftOpen())"
+          (click)="toggleFilterDrawer()"
           type="button"
+          [attr.aria-expanded]="leftOpen()"
           aria-label="Toggle filters"
           title="Toggle filters"
         >

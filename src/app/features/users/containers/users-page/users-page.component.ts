@@ -1,5 +1,6 @@
 import {
-  Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef
+  Component, ChangeDetectionStrategy, inject, signal, computed, DestroyRef,
+  ElementRef, ViewChild, HostListener
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { switchMap, combineLatest, EMPTY, catchError, distinctUntilChanged, tap, take, shareReplay } from 'rxjs';
@@ -33,6 +34,9 @@ export class UsersPageComponent {
   readonly viewModeService = inject(ViewModeService);
   private readonly destroyRef = inject(DestroyRef);
 
+  @ViewChild('filterToggleBtn') private filterToggleBtn?: ElementRef<HTMLButtonElement>;
+  @ViewChild('filterDrawer')    private filterDrawer?: ElementRef<HTMLElement>;
+
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly groups = signal<UserGroup[]>([]);
@@ -57,6 +61,28 @@ export class UsersPageComponent {
 
   onUserSelect(user: User): void {
     this.selectedUser.update(prev => prev?.id === user.id ? null : user);
+  }
+
+  toggleFilterDrawer(): void {
+    const opening = !this.leftOpen();
+    this.leftOpen.set(opening);
+    if (opening) {
+      setTimeout(() => {
+        const first = this.filterDrawer?.nativeElement
+          .querySelector<HTMLElement>('button, input, select, [tabindex="0"]');
+        first?.focus();
+      }, 0);
+    }
+  }
+
+  closeDrawer(): void {
+    this.leftOpen.set(false);
+    this.filterToggleBtn?.nativeElement.focus();
+  }
+
+  @HostListener('document:keydown.escape')
+  onDocumentEscape(): void {
+    if (this.leftOpen()) this.closeDrawer();
   }
 
   prevPage(): void { this.currentPage.update(p => Math.max(1, p - 1)); }
