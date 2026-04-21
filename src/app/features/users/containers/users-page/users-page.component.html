@@ -7,7 +7,12 @@
 
   <!-- ── Left drawer — Filters ── -->
   @if (!filterService.state().agentMode) {
-    <aside class="users-page__left" [class.users-page__left--open]="leftOpen()">
+    <aside
+      class="users-page__left"
+      [class.users-page__left--open]="leftOpen()"
+      [attr.inert]="leftOpen() ? null : true"
+      aria-label="Filters"
+    >
       <app-faceted-filters />
       <app-location-filter [users]="allUsers()" />
       <app-saved-filters />

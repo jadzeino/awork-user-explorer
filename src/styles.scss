@@ -124,15 +124,36 @@ html, body {
   border: 0;
 }
 
-/* Consistent focus ring for all interactive elements */
+/* Consistent focus ring for all interactive elements.
+   Negative offset keeps the ring inside the element's border box so it is
+   never clipped by ancestor overflow:hidden containers (Chrome paint behavior). */
 :focus-visible {
   outline: 2px solid var(--accent-primary);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 /* Remove default outline only when :focus-visible is available */
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Skip-nav link — visually hidden until focused */
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: 6px 14px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: top 0.1s;
+
+  &:focus { top: 0; outline: none; }
 }
 
 /* =========================================================
