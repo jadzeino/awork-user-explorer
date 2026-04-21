@@ -7,8 +7,8 @@
     "build": "ng build",
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "test": "jest --watch",
+    "test:ci": "jest --ci",
     "lint": "eslint src --max-warnings=0",
     "format": "prettier --write src",
     "format:check": "prettier --check src"
@@ -26,27 +26,24 @@
     "@angular/router": "20.3.11",
     "rxjs": "7.8.0",
     "tslib": "2.8.1",
-    "zone.js": "0.15.1",
-    "zod": "3.24.4"
+    "zod": "3.24.4",
+    "zone.js": "0.15.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "20.3.10",
-    "@angular/cli": "20.3.10",
-    "@angular/compiler-cli": "20.3.11",
     "@angular-eslint/eslint-plugin": "19.0.2",
     "@angular-eslint/eslint-plugin-template": "19.0.2",
     "@angular-eslint/template-parser": "19.0.2",
+    "@angular/cli": "20.3.10",
+    "@angular/compiler-cli": "20.3.11",
+    "@types/jest": "^30.0.0",
     "@typescript-eslint/eslint-plugin": "8.34.0",
     "@typescript-eslint/parser": "8.34.0",
     "eslint": "9.28.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-preset-angular": "^16.1.4",
     "prettier": "3.5.3",
-    "@types/jasmine": "5.1.0",
-    "jasmine-core": "5.1.0",
-    "karma": "6.4.0",
-    "karma-chrome-launcher": "3.2.0",
-    "karma-coverage": "2.2.0",
-    "karma-jasmine": "5.1.0",
-    "karma-jasmine-html-reporter": "2.1.0",
     "typescript": "5.9.2"
   }
 }
