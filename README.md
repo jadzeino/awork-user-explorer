@@ -38,7 +38,7 @@
 
 | Feature | Detail |
 |---|---|
-| **Smart search bar** | Debounced 250 ms keyword search across any combination of name, email, username, phone, city, or country — toggled via field chips |
+| **Smart search bar** | Instant keyword search across any combination of name, email, username, phone, city, or country — toggled via field chips. Filtering runs in a Web Worker via `switchMap` cancellation, so every keystroke is handled without UI jank or stale results. |
 | **Natural language parsing** | Type `"female users under 30 from Germany"` and it extracts gender, age ceiling, and nationality filters from the sentence |
 | **Gender filter** | Toggle female / male / other — reflected on the analytics donut in real time |
 | **Nationality filter** | 21 ISO country chips; multi-select; stacks with other filters |
@@ -138,6 +138,22 @@ Without a key the app is fully functional — Agent Mode shows a configuration n
 ---
 
 ## Architecture
+
+### Architecture Diagrams
+
+Visual maps of the system — click any to open full size:
+
+| Diagram | Description |
+|---|---|
+| [Overall System Architecture](public/images/flows/Diagram_1_Overall_System_Architecture.png) | All layers: components, services, Web Worker, browser storage, and external APIs |
+| [Component Tree & I/O Bindings](public/images/flows/Diagram_2_Component_Tree_IO_Bindings.png) | Parent–child component relationships with every `[input]` and `(output)` binding |
+| [Filter State Change — Full Sequence](public/images/flows/Diagram_3_Filter_State_Change_Full_Sequence.png) | Step-by-step flow from a user keystroke through signals, RxJS, Worker, and back to the DOM |
+| [Service Dependency & Injection Graph](public/images/flows/Diagram_4_Service_Dependency_Injection_Graph.png) | Which services inject which, and which components depend on each service |
+| [State Ownership Map](public/images/flows/Diagram_5_State_Ownership_Map.png) | Every signal — who writes it, who reads it, and what it derives |
+
+---
+
+### Folder Structure
 
 ```
 src/

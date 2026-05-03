@@ -65,6 +65,14 @@ UsersService — HTTP fetch + Zod validation + shareReplay(1) cache
 
 `FilterService` holds a single `signal<FilterState>` that sits outside this flow and feeds into `combineLatest` via `toObservable()`. Any component that calls `filterService.update()` triggers a new grouping pass through the worker — without re-fetching data from the API.
 
+**Architecture diagrams** (visual maps, click to open):
+
+- [Overall System Architecture](public/images/flows/Diagram_1_Overall_System_Architecture.png) — all layers: components, services, Worker, storage, external APIs
+- [Component Tree & I/O Bindings](public/images/flows/Diagram_2_Component_Tree_IO_Bindings.png) — every `[input]` and `(output)` binding between components
+- [Filter State Change — Full Sequence](public/images/flows/Diagram_3_Filter_State_Change_Full_Sequence.png) — keystroke → signal → RxJS → Worker → DOM, step by step
+- [Service Dependency & Injection Graph](public/images/flows/Diagram_4_Service_Dependency_Injection_Graph.png) — which services inject which, and which components depend on each
+- [State Ownership Map](public/images/flows/Diagram_5_State_Ownership_Map.png) — every signal: who writes it, who reads it, what it derives
+
 ---
 
 ## 3. Feature Decisions
@@ -226,7 +234,168 @@ WCAG 2.1 AA was treated as a hard requirement. Specific non-obvious decisions:
 
 ---
 
-## 9. If I Had More Time
+## 9. Path to Production — Scaling Beyond This Architecture
+
+This section documents what would need to change if the data source were a real production API (unseeded, dynamic, large-scale) and the business required handling significantly more than 5,000 users.
+
+---
+
+### 9.1 What the Current Architecture Assumes
+
+The current design makes three assumptions that are only valid because of `randomuser.me`'s specific behaviour:
+
+1. **The dataset is static for the session** — the API returns the same 5,000 users every time for a given seed. Caching in `sessionStorage` is safe because the data never changes.
+2. **The full dataset fits in memory** — 5,000 users × ~500 bytes ≈ 2.5 MB. Reasonable to load all at once, filter client-side.
+3. **The API has no filter/search capability** — there is no `?search=` or `?gender=female` parameter to send. Every filter must run locally.
+
+None of these hold for a real production API.
+
+---
+
+### 9.2 If the API Were Unseeded (Dynamic / Real Data)
+
+#### Problem: `sessionStorage` cache becomes stale
+The current cache key is `aw-users-p${page}`. Once written, it is read back on every page reload without any freshness check. With a real API returning live data, users would see stale results indefinitely.
+
+**What to change:**
+
+Replace the `sessionStorage` write-through cache with a **stale-while-revalidate** pattern:
+
+```ts
+// Instead of: serve cache immediately, never re-fetch
+if (stored) return of(stored);
+
+// Production: serve cache immediately AND re-fetch in background
+if (stored) {
+  this.http.get(url).pipe(map(validate)).subscribe(fresh => {
+    if (!isEqual(fresh, stored)) this.writeSession(page, fresh);
+  });
+  return of(stored); // still fast first paint
+}
+```
+
+Or move to **IndexedDB** with a TTL timestamp per entry — read the cache, check `Date.now() - cachedAt > TTL`, revalidate in background if stale. This survives the 5 MB `sessionStorage` quota limit and handles larger datasets.
+
+#### Problem: `seed` parameter makes data deterministic
+The current URL is hardcoded:
+```ts
+const url = `${API_URL}?results=5000&seed=awork&page=${page}`;
+```
+A real API would have stable resource URLs, authentication headers, and response envelope shapes that differ from randomuser.me. `UsersService.getUsers()` would be replaced with a proper resource-scoped method:
+
+```ts
+getUsers(params: UserQueryParams): Observable<PagedResult<User>> {
+  return this.http.get<ApiPagedResponse>('/api/v1/users', { params }).pipe(
+    map(validateAndMapPagedResponse),
+    shareReplay(1),
+  );
+}
+```
+
+---
+
+### 9.3 If the Dataset Grew Well Beyond 5,000 Users
+
+#### Threshold: ~10,000 users — `sessionStorage` quota breaks
+At ~500 bytes per user, 10,000 users hits the 5 MB `sessionStorage` limit. The current `try/catch` silently swallows the write — caching stops working without any visible signal.
+
+**Fix:** migrate to **IndexedDB** via the standard `IDBObjectStore` API or a thin wrapper like `idb`. No practical size limit, async, structured.
+
+#### Threshold: ~50,000 users — memory and Worker serialisation cost
+The entire user array is serialised (structured clone) and sent to the Web Worker on every filter change:
+
+```ts
+this.worker.postMessage({ users: allUsers, ...filterState });
+```
+
+At 50,000 users, that is ~25 MB copied across the thread boundary on every keystroke. The structured clone cost alone becomes noticeable (~30–80 ms on mid-range devices).
+
+**Fix:** move the dataset into the worker permanently — send it once on load, then only send filter state patches on subsequent calls:
+
+```ts
+// Worker init — send users once
+this.worker.postMessage({ type: 'INIT', users });
+
+// Per filter change — send only the diff
+this.worker.postMessage({ type: 'FILTER', filterState });
+```
+
+The worker retains the full array in its own memory scope. No serialisation cost per keystroke.
+
+#### Threshold: ~100,000+ users — client-side filtering is the wrong model
+
+Beyond this scale, the fundamental architecture must shift from **client-side filtering** to **server-side filtering**. The browser is the wrong place to run predicate logic over hundreds of thousands of records.
+
+**What the architecture change looks like:**
+
+```
+Current model (client-side):
+  App loads ALL data → Worker filters locally → renders subset
+
+Production model (server-side):
+  User changes filter → debounce 300ms → send filter params to API
+  → API returns only matching page → Worker groups the small result → renders
+```
+
+The reactive pipeline requires only one change — the data source inside `switchMap`:
+
+```ts
+// Current — users fetched once, filter applied in worker
+combineLatest([users$, filterState$]).pipe(
+  switchMap(([users, filterState]) =>
+    this.groupingService.group({ users, ...filterState })
+  )
+)
+
+// Production — filter sent to server, server returns page
+toObservable(this.filterService.state).pipe(
+  debounceTime(300),
+  distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+  tap(() => this.loading.set(true)),
+  switchMap(filterState =>
+    this.usersService.search(filterState).pipe(
+      catchError(err => { this.error.set(err.message); return EMPTY; })
+    )
+  ),
+  switchMap(({ users, total }) =>
+    this.groupingService.group({ users, ...this.filterService.state() }).pipe(
+      tap(result => {
+        this.groups.set(result.groups);
+        this.totalCount.set(total); // server-reported total, not client count
+        this.loading.set(false);
+      })
+    )
+  )
+)
+```
+
+`switchMap` already cancels in-flight HTTP requests when a new filter change arrives — no additional stale-result protection needed. `debounceTime(300)` prevents a network request on every individual keystroke.
+
+The `FilterService`, `GroupingService`, `UserListComponent`, and all presentational components need no changes — they are already decoupled from the data source.
+
+---
+
+### 9.4 Full Production Readiness Checklist
+
+| Concern | Current state | Production change required |
+|---|---|---|
+| **Cache freshness** | `sessionStorage`, no TTL | IndexedDB with TTL + stale-while-revalidate |
+| **Storage quota** | 5 MB `sessionStorage` limit | IndexedDB (no practical limit) |
+| **Filter execution** | Client-side, Web Worker | Server-side for > ~50k records; worker handles grouping only |
+| **Search latency** | Instant (local) | `debounceTime(300)` before API call |
+| **Pagination** | Fixed seed pages (randomuser.me) | Cursor-based or offset pagination with server-reported total |
+| **Authentication** | None (public API) | `HttpInterceptor` for `Authorization` header injection |
+| **Error recovery** | `catchError` → show message | Retry logic (`retryWhen` / `retry({ count: 3, delay: 1000 })`) |
+| **Worker data transfer** | Full array per request | INIT once + FILTER patches only |
+| **URL state** | Not serialised | Encode `FilterState` as query params for bookmarkable views |
+| **Real-time updates** | Not applicable | `EventSource` or WebSocket → merge into `users$` stream |
+| **Offline support** | None | Service Worker + IndexedDB for full offline capability |
+
+The core architecture — signal state, reactive `switchMap` pipeline, Web Worker grouping, CDK virtual scroll, OnPush components — requires no structural changes for any of these. The data layer is the only thing that evolves.
+
+---
+
+## 10. If I Had More Time
 
 1. **Guided feature tour** — an interactive step-by-step walkthrough that introduces new users to the filters, grouping, analytics, compare mode, and agent mode one feature at a time, with tooltips and highlights. Tools like Shepherd.js or a lightweight custom implementation would work well here. The goal: a user who opens the app for the first time should be able to discover what it can do without reading any documentation.
 2. **URL-serialised filter state** — encode `FilterState` as query params so any filtered view is bookmarkable and shareable
