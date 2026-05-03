@@ -179,7 +179,6 @@ src/
 │   │       │   ├── location-filter/     # Cascading country → state → city selects
 │   │       │   ├── saved-filters/       # Save, apply, and delete named filter presets
 │   │       │   ├── user-detail/         # Slide-in detail panel (dialog role, focus trap)
-│   │       │   ├── user-filters/        # Filter drawer container (slide-over panel)
 │   │       │   ├── user-item/           # Single virtual-scroll row
 │   │       │   └── user-list/           # CDK virtual scroll viewport + group headers
 │   │       └── containers/
